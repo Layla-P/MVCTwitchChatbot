@@ -1,0 +1,47 @@
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+   <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <title>Bars</title>
+      <link rel="stylesheet" href="/css/goal.css">
+</head>
+<body>
+<div class="bar-container" style="height: 500px;">
+  <div class="goal-bar">
+    <div class="bar-wrap">
+   <hr class="bar-line" />
+      <hr class="bar-line" />
+      <hr class="bar-line" />
+      <hr class="bar-line" />
+      <hr class="bar-line" />
+      <input type="hidden" id="Count" value="@ViewBag.Count"/>
+      <div class="bar" id="Bar" >
+        <div id="Bar-info" class="bar-info">
+          <div class="bar-info-inner">
+            @ViewBag.Count / 300
+          </div>
+        </div>
+      </div>
+      <span class="bar-label"></span>
+    </div>
+
+    <div class="bar-labels">
+      <span class="bar-label">300</span>
+      <span class="bar-label">225</span>
+      <span class="bar-label">150</span>
+      <span class="bar-label">75</span>
+      <span class="bar-label">0</span>
+    </div>
+  </div> <!-- /.goal-bar -->
+</div>
+  <script src="/js/goal.js"></script>
+</body>
+</html>
