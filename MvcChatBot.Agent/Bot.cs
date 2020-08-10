@@ -72,6 +72,7 @@ namespace MvcChatBot.Agent
 
         private async Task Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
         {
+            
             if (e.ChatMessage.Message.StartsWith("!rain", StringComparison.InvariantCultureIgnoreCase))
             {
                 Console.WriteLine(_connection.ConnectionId);
@@ -83,12 +84,43 @@ namespace MvcChatBot.Agent
                 //_client.SendMessage(_settings.Channel, $"Hey there { e.ChatMessage.DisplayName }.");
             }
 
-            // else if (e.ChatMessage.Message.StartsWith("!uptime", StringComparison.InvariantCultureIgnoreCase))
-            // {
-            //     var upTime = GetUpTime().Result;
-            //
-            //     _client.SendMessage(_settings.Channel, upTime?.ToString() ?? "Offline");
-            // }
+            if (e.ChatMessage.Message.StartsWith("!getyourcake", StringComparison.InvariantCultureIgnoreCase))
+            {
+                Console.WriteLine(_connection.ConnectionId);
+                if (e.ChatMessage.IsModerator || e.ChatMessage.IsBroadcaster)
+                {
+                    await _connection.InvokeAsync("PlaySoundMessage", e.ChatMessage.DisplayName, "getyourcake");
+                }
+                
+            }
+
+            if (e.ChatMessage.Message.StartsWith("!codecake", StringComparison.InvariantCultureIgnoreCase))
+            {
+                Console.WriteLine(_connection.ConnectionId);
+                if (e.ChatMessage.IsModerator || e.ChatMessage.IsBroadcaster)
+                {
+                    await _connection.InvokeAsync("PlaySoundMessage", e.ChatMessage.DisplayName, "codecake");
+                }
+
+            }
+            if (e.ChatMessage.Message.StartsWith("!stopcoming", StringComparison.InvariantCultureIgnoreCase))
+            {
+                Console.WriteLine(_connection.ConnectionId);
+                if (e.ChatMessage.IsModerator || e.ChatMessage.IsBroadcaster)
+                {
+                    await _connection.InvokeAsync("PlaySoundMessage", e.ChatMessage.DisplayName, "stopcoming");
+                }
+
+            }
+            if (e.ChatMessage.Message.StartsWith("!thatcode", StringComparison.InvariantCultureIgnoreCase))
+            {
+                Console.WriteLine(_connection.ConnectionId);
+                if (e.ChatMessage.IsModerator || e.ChatMessage.IsBroadcaster)
+                {
+                    await _connection.InvokeAsync("PlaySoundMessage", e.ChatMessage.DisplayName, "thatcode");
+                }
+
+            }
         }
 
         private void Client_OnWhisperReceived(object sender, OnWhisperReceivedArgs e)

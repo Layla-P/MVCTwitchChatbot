@@ -10,7 +10,12 @@ namespace MvcChatBot.Hubs
         {
             await Clients.All.SendAsync("LaylaMessage", user, message);
         }
-        
+
+        public async Task PlaySoundMessage(string user, string message)
+        {
+            await Clients.All.SendAsync("SoundMessage", user, message);
+        }
+
         public async Task UpdateBrowser()
         {
             
