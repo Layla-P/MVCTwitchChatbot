@@ -3,8 +3,9 @@
 var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
 
-connection.on("LaylaMessage", function (user, message) {
-    handleClick();
+connection.on("LaylaMessage", function (user, message, isSuper) {
+    let count = isSuper ? 50 : 7;
+    handleClick(count);
 });
 
 connection.start().then(function () {
@@ -68,9 +69,9 @@ Runner.run(runner, engine);
 
 World.add(engine.world, [ground, leftWall, rightWall]);
 
-const handleClick = () => {
+const handleClick = (count) => {
 
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < count; i++) {
         World.add(engine.world, [createBall()])
     }
 

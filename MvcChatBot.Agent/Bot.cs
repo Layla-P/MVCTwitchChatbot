@@ -76,19 +76,17 @@ namespace MvcChatBot.Agent
             {
                 Console.WriteLine(_connection.ConnectionId);
                 
-                await _connection.InvokeAsync("SendMessage", e.ChatMessage.DisplayName,"Make it rain!!!");
-                
-               // await _hub.Clients.All.SendAsync("TriggerRain");
-                //_hub.Clients.All.SendAsync("TriggerRain");
-                //_client.SendMessage(_settings.Channel, $"Hey there { e.ChatMessage.DisplayName }.");
+                await _connection.InvokeAsync("SendMessage", e.ChatMessage.DisplayName,"Make it rain!!!", false);
+           
             }
 
-            // else if (e.ChatMessage.Message.StartsWith("!uptime", StringComparison.InvariantCultureIgnoreCase))
-            // {
-            //     var upTime = GetUpTime().Result;
-            //
-            //     _client.SendMessage(_settings.Channel, upTime?.ToString() ?? "Offline");
-            // }
+            if (e.ChatMessage.Message.StartsWith("!superrain", StringComparison.InvariantCultureIgnoreCase))
+            {
+                Console.WriteLine(_connection.ConnectionId);
+
+                await _connection.InvokeAsync("SendMessage", e.ChatMessage.DisplayName, "It's a torrential downpour of destructopups!!!", true);
+
+            }
         }
 
         private void Client_OnWhisperReceived(object sender, OnWhisperReceivedArgs e)

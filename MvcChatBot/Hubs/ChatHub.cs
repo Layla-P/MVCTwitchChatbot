@@ -6,9 +6,9 @@ namespace MvcChatBot.Hubs
 {
     public class ChatHub : Hub
     {
-        public async Task SendMessage(string user, string message)
+        public async Task SendMessage(string user, string message, bool isSuper = false)
         {
-            await Clients.All.SendAsync("LaylaMessage", user, message);
+            await Clients.All.SendAsync("LaylaMessage", user, message, isSuper);
         }
         
         public async Task UpdateBrowser()

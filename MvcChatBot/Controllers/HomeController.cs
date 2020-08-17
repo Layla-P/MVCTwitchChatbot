@@ -32,7 +32,6 @@ namespace MvcChatBot.Controllers
         {
             
             ViewBag.Count  = await _airtableService.GetCount();
-            
             return View();
         }
         [Route("rain")]
@@ -46,6 +45,7 @@ namespace MvcChatBot.Controllers
             return View();
         }
 
+        
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

@@ -53,7 +53,7 @@ namespace MvcChatBot.Agent
            
             services.AddSingleton(twitchSettings);
             var bot = new Bot(twitchSettings, (IHubContext<ChatHub>)hubContext, connection);
-            services.AddSingleton<Bot>();
+            services.AddSingleton(bot);
             
 
             var serviceProvider = services.BuildServiceProvider();
