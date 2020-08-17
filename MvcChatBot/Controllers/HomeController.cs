@@ -40,6 +40,11 @@ namespace MvcChatBot.Controllers
             return View();
         }
 
+        [Route("sound")]
+        public IActionResult Sound()
+        {
+            return View();
+        }
         public IActionResult Privacy()
         {
             return View();

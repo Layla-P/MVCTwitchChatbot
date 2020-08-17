@@ -72,6 +72,7 @@ namespace MvcChatBot.Agent
 
         private async Task Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
         {
+            
             if (e.ChatMessage.Message.StartsWith("!rain", StringComparison.InvariantCultureIgnoreCase))
             {
                 Console.WriteLine(_connection.ConnectionId);
@@ -80,11 +81,13 @@ namespace MvcChatBot.Agent
            
             }
 
+
             if (e.ChatMessage.Message.StartsWith("!superrain", StringComparison.InvariantCultureIgnoreCase))
             {
                 Console.WriteLine(_connection.ConnectionId);
 
                 await _connection.InvokeAsync("SendMessage", e.ChatMessage.DisplayName, "It's a torrential downpour of destructopups!!!", true);
+
 
             }
         }
