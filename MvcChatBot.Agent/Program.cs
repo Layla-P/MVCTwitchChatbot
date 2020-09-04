@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Hosting;
 using MvcChatBot.Hubs;
 using MvcChatBot.Services;
-
+using MvcChatBot.Agent.Services;
 
 namespace MvcChatBot.Agent
 {
@@ -44,13 +44,18 @@ namespace MvcChatBot.Agent
             {
                 BotName = Configuration.GetValue<string>("TwitchSettings:BotName"),
                 AuthToken = Configuration.GetValue<string>("TwitchSettings:AuthToken"),
-                Channel = Configuration.GetValue<string>("TwitchSettings:Channel")
+                Channel = Configuration.GetValue<string>("TwitchSettings:Channel"),
+                ChannelId = Configuration.GetValue<string>("TwitchSettings:ChannelId"),
+                ChannelAuthToken = Configuration.GetValue<string>("TwitchSettings:ChannelAuthToken")
             };
            
             services.AddSingleton(twitchSettings);
             var bot = new Bot(twitchSettings, connection);
             services.AddSingleton(bot);
-            
+
+            var pubsubService = new TwitchPubSubService(twitchSettings, connection);
+            services.AddSingleton(pubsubService);
+
 
             var serviceProvider = services.BuildServiceProvider();
 

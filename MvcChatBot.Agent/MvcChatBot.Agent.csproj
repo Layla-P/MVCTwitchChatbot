@@ -19,6 +19,7 @@
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.5" />
       <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.5" />
       <PackageReference Include="TwitchLib.Client" Version="3.1.5" />
+      <PackageReference Include="TwitchLib.PubSub" Version="3.1.5-CI-20200712-3" />
     </ItemGroup>
 
 

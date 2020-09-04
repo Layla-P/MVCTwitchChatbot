@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
 using MvcChatBot.Hubs;
@@ -11,6 +10,7 @@ using TwitchLib.Client.Extensions;
 using TwitchLib.Client.Models;
 using TwitchLib.Communication.Clients;
 using TwitchLib.Communication.Models;
+
 
 namespace MvcChatBot.Agent
 {
@@ -43,7 +43,7 @@ namespace MvcChatBot.Agent
 
             _client.OnLog += Client_OnLog;
             _client.OnJoinedChannel += Client_OnJoinedChannel;
-            _client.OnMessageReceived += async (s, e) => { await Client_OnMessageReceived(s, e); };
+            _client.OnMessageReceived +=  Client_OnMessageReceived;
             _client.OnWhisperReceived += Client_OnWhisperReceived;
             _client.OnNewSubscriber += Client_OnNewSubscriber;
             _client.OnConnected += Client_OnConnected;
@@ -67,7 +67,7 @@ namespace MvcChatBot.Agent
             _client.SendMessage(e.Channel, "Hello lovelies, I'm Layla's little helper!");
         }
 
-        private async Task Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
+        private async void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
         {
             
             if (e.ChatMessage.Message.StartsWith("!rain", StringComparison.InvariantCultureIgnoreCase))
@@ -79,13 +79,13 @@ namespace MvcChatBot.Agent
             }
 
 
-            if (e.ChatMessage.Message.StartsWith("!superrain", StringComparison.InvariantCultureIgnoreCase))
-            {
-                Console.WriteLine(_connection.ConnectionId);
+            //if (e.ChatMessage.Message.StartsWith("!superrain", StringComparison.InvariantCultureIgnoreCase))
+            //{
+            //    Console.WriteLine(_connection.ConnectionId);
 
-                await _connection.InvokeAsync("SendMessage", e.ChatMessage.DisplayName, "It's a torrential downpour of destructopups!!!", true);
+            //    await _connection.InvokeAsync("SendMessage", e.ChatMessage.DisplayName, "It's a torrential downpour of destructopups!!!", true);
 
-            }
+            //}
 
             if (e.ChatMessage.Message.StartsWith("!balls", StringComparison.InvariantCultureIgnoreCase))
             {
