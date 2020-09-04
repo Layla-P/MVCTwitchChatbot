@@ -17,18 +17,10 @@ function playSound(message) {
     let clip = '';
 
     switch (message) {
-        case 'getyourcake':
-            clip = 'get_your_cake_in.mp3';
+        case 'balls':
+            clip = 'layla_balls.mp3';
             break;
-        case 'codecake':
-            clip = 'code_cake.mp3';
-            break;
-        case 'stopcoming':
-            clip = 'stop_coming_out.mp3';
-            break;
-        case 'thatcode':
-            clip = 'thats_code_cake.mp3';
-            break;
+       
         default:
             clip = null;
     }

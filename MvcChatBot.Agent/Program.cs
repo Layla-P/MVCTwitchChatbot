@@ -31,11 +31,7 @@ namespace MvcChatBot.Agent
                 .AddCommandLine(args)
                 .Build();
             
-            
-            var host = CreateHostBuilder(args).Build();
-            var hubContext = host
-                .Services.GetService(typeof(IHubContext<ChatHub>));
-            host.RunAsync();
+ 
             var connection = new HubConnectionBuilder()
                 .WithUrl("http://localhost:52179/ChatHub")
                 .WithAutomaticReconnect()
@@ -52,15 +48,13 @@ namespace MvcChatBot.Agent
             };
            
             services.AddSingleton(twitchSettings);
-            var bot = new Bot(twitchSettings, (IHubContext<ChatHub>)hubContext, connection);
+            var bot = new Bot(twitchSettings, connection);
             services.AddSingleton(bot);
             
 
             var serviceProvider = services.BuildServiceProvider();
-            //Testing writing to line
+
             Console.WriteLine("Hello World!");
-            //IHubContext<ChatHub> context = serviceProvider.GetService<IHubContext<ChatHub>>();
-            //Bot twitchChatBot = serviceProvider.GetService<Bot>();
             
             Console.ReadLine();
             

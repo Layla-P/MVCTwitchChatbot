@@ -18,17 +18,14 @@ namespace MvcChatBot.Agent
     {
         private readonly TwitchClient _client;
         private readonly TwitchSettings _settings;
-        private readonly IHubContext<ChatHub> _hub;
         private readonly HubConnection _connection;
 
 
         public Bot(
             TwitchSettings settings,
-            IHubContext<ChatHub> hub,
             HubConnection connection)
         {
             _settings = settings;
-            _hub = hub;
             _connection = connection;
             _connection.StartAsync();
             
@@ -67,7 +64,7 @@ namespace MvcChatBot.Agent
         private void Client_OnJoinedChannel(object sender, OnJoinedChannelArgs e)
         {
             Console.WriteLine("Hey guys! I am a bot connected via TwitchLib!");
-            _client.SendMessage(e.Channel, "Hey guys! I am a bot connected via TwitchLib!");
+            _client.SendMessage(e.Channel, "Hello lovelies, I'm Layla's little helper!");
         }
 
         private async Task Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
@@ -88,6 +85,17 @@ namespace MvcChatBot.Agent
 
                 await _connection.InvokeAsync("SendMessage", e.ChatMessage.DisplayName, "It's a torrential downpour of destructopups!!!", true);
 
+            }
+
+            if (e.ChatMessage.Message.StartsWith("!balls", StringComparison.InvariantCultureIgnoreCase))
+            {
+                Console.WriteLine(_connection.ConnectionId);
+                if (e.ChatMessage.IsModerator || e.ChatMessage.IsBroadcaster)
+                {
+                    _client.SendMessage(e.ChatMessage.Channel, "Time to get your balls in! Type !prizedraw in the chat to be in with a chance to win!");
+                    
+                    await _connection.InvokeAsync("PlaySoundMessage", e.ChatMessage.DisplayName, "balls");
+                }
 
             }
         }
