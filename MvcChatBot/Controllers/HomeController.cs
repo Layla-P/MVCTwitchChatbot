@@ -39,7 +39,11 @@ namespace MvcChatBot.Controllers
         {
             return View();
         }
-
+        [Route("raid")]
+        public IActionResult Raiders()
+        {
+            return View();
+        }
         [Route("sound")]
         public IActionResult Sound()
         {

@@ -60,7 +60,7 @@ namespace MvcChatBot.Agent
             var serviceProvider = services.BuildServiceProvider();
 
             Console.WriteLine("Hello World!");
-            
+
             Console.ReadLine();
             
 

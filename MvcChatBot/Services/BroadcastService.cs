@@ -15,7 +15,7 @@ namespace MvcChatBot.Services
 
         public void SendNotificationAsync()
         {
-            _hub.Clients.All.SendAsync("TriggerRain");
+            _hub.Clients.All.SendAsync("Bops", 27);
         }
     }
 }

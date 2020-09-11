@@ -11,6 +11,11 @@ namespace MvcChatBot.Hubs
             await Clients.All.SendAsync("LaylaMessage", user, message, isSuper);
         }
 
+        public async Task Raid(int raiderCount)
+        {
+            await Clients.All.SendAsync("Bops", raiderCount);
+        }
+
         public async Task PlaySoundMessage(string user, string message)
         {
             await Clients.All.SendAsync("SoundMessage", user, message);
