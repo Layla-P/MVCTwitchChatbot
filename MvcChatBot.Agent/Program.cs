@@ -53,8 +53,8 @@ namespace MvcChatBot.Agent
             var bot = new Bot(twitchSettings, connection);
             services.AddSingleton(bot);
 
-            var pubsubService = new TwitchPubSubService(twitchSettings, connection);
-            services.AddSingleton(pubsubService);
+            //var pubsubService = new TwitchPubSubService(twitchSettings, connection);
+            //services.AddSingleton(pubsubService);
 
 
             var serviceProvider = services.BuildServiceProvider();

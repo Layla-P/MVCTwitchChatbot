@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
 using MvcChatBot.Hubs;
@@ -8,6 +9,7 @@ using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Extensions;
 using TwitchLib.Client.Models;
+using TwitchLib.Client.Models.Builders;
 using TwitchLib.Communication.Clients;
 using TwitchLib.Communication.Models;
 
@@ -28,10 +30,12 @@ namespace MvcChatBot.Agent
             _settings = settings;
             _connection = connection;
             _connection.StartAsync();
-            
-           
-            
-            ConnectionCredentials credentials = new ConnectionCredentials(_settings.BotName, _settings.AuthToken);
+
+            //public const string DefaultWebSocketUri = "wss://irc-ws.chat.twitch.tv:443";
+            var webSocketUri = "wss://irc.fdgt.dev:443";
+
+            ConnectionCredentials credentials = new ConnectionCredentials(_settings.BotName, _settings.AuthToken, webSocketUri);
+
             var clientOptions = new ClientOptions
             {
                 MessagesAllowedInPeriod = 750,
@@ -43,12 +47,32 @@ namespace MvcChatBot.Agent
 
             _client.OnLog += Client_OnLog;
             _client.OnJoinedChannel += Client_OnJoinedChannel;
-            _client.OnMessageReceived +=  Client_OnMessageReceived;
+            _client.OnMessageReceived += Client_OnMessageReceived;
+            _client.OnRaidNotification += Client_OnRaidNotification;
             _client.OnWhisperReceived += Client_OnWhisperReceived;
             _client.OnNewSubscriber += Client_OnNewSubscriber;
             _client.OnConnected += Client_OnConnected;
 
             _client.Connect();
+
+            Thread.Sleep(10000);
+
+            FdgtTest();
+        }
+
+
+        public void FdgtTest()
+        {
+            try
+            {
+                _client.JoinChannel(_settings.Channel);
+                Thread.Sleep(10000);
+                _client.SendMessage($"#{_settings.Channel}", "raid --username drdisrespectlive --viewercount 27");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private void Client_OnLog(object sender, OnLogArgs e)
@@ -69,13 +93,13 @@ namespace MvcChatBot.Agent
 
         private async void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
         {
-            
+
             if (e.ChatMessage.Message.StartsWith("!rain", StringComparison.InvariantCultureIgnoreCase))
             {
                 Console.WriteLine(_connection.ConnectionId);
-                
-                await _connection.InvokeAsync("SendMessage", e.ChatMessage.DisplayName,"Make it rain!!!", false);
-           
+
+                await _connection.InvokeAsync("SendMessage", e.ChatMessage.DisplayName, "Make it rain!!!", false);
+
             }
 
 
@@ -93,11 +117,20 @@ namespace MvcChatBot.Agent
                 if (e.ChatMessage.IsModerator || e.ChatMessage.IsBroadcaster)
                 {
                     _client.SendMessage(e.ChatMessage.Channel, "Time to get your balls in! Type !prizedraw in the chat to be in with a chance to win!");
-                    
+
                     await _connection.InvokeAsync("PlaySoundMessage", e.ChatMessage.DisplayName, "balls");
                 }
 
             }
+        }
+
+        private async void Client_OnRaidNotification(object sender, OnRaidNotificationArgs e)
+        {
+            int.TryParse(e.RaidNotification.MsgParamViewerCount, out var count);
+
+            count = count != 0 ? count : 1;
+
+            await _connection.InvokeAsync("Raid", count);
         }
 
         private void Client_OnWhisperReceived(object sender, OnWhisperReceivedArgs e)
