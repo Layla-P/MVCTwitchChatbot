@@ -8,6 +8,9 @@ using Microsoft.Extensions.Hosting;
 using MvcChatBot.Hubs;
 using MvcChatBot.Services;
 using MvcChatBot.Agent.Services;
+using MvcChatBot.Agent.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MvcChatBot.Agent
 {
@@ -39,7 +42,37 @@ namespace MvcChatBot.Agent
            
 
             IServiceCollection services = new ServiceCollection();
-           
+
+            var lists = new List<TrelloList>();
+            var test = Configuration.GetSection("TrelloSettings:TrelloLists")
+                .GetChildren().ToList();
+
+            foreach (var l in test)
+            {
+                var list = new TrelloList();
+                l.Bind(list);
+                lists.Add(list);
+            }
+
+            TrelloSettings trelloSettings = new TrelloSettings
+            {
+                ApiKey = Configuration.GetValue<string>("TrelloSettings:ApiKey"),
+                Token = Configuration.GetValue<string>("TrelloSettings:Token"),
+                BoardId = Configuration.GetValue<string>("TrelloSettings:BoardId"),
+                TrelloLists = lists
+            };
+
+
+            //var trelloSettings = services.Configure<TrelloSettings>(Configuration.GetSection("TrelloService"));
+            services.AddSingleton(trelloSettings);
+            services.AddSingleton<TrelloService>();
+            // var trelloService = new TrelloService(trelloSettings);
+            //services.AddSingleton(trelloService);
+            //should work but doesn't
+            //services.AddOptions();
+            //services.Configure<TrelloSettings>(Configuration.GetSection("TrelloService"));
+            //services.AddSingleton<TrelloService>();
+
             TwitchSettings twitchSettings = new TwitchSettings
             {
                 BotName = Configuration.GetValue<string>("TwitchSettings:BotName"),
@@ -56,8 +89,19 @@ namespace MvcChatBot.Agent
             var pubsubService = new TwitchPubSubService(twitchSettings, connection);
             services.AddSingleton(pubsubService);
 
+           
 
             var serviceProvider = services.BuildServiceProvider();
+
+            var trelloService = serviceProvider.GetService<TrelloService>();
+            var testCard = new NewTrelloCard
+            {
+                UserName = "@LaylaCodesIt",
+                CardName = "Avatars swirling on a raid",
+                Description = "Avatars pulled through to swrirl around when there is a rais",
+                ListName = "Bot Ideas"
+            };
+            trelloService.AddNewCardAsync(testCard);
 
             Console.WriteLine("Hello World!");
 

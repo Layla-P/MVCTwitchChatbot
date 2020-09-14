@@ -20,7 +20,6 @@ namespace MvcChatBot.Agent
         private readonly TwitchClient _client;
         private readonly TwitchSettings _settings;
         private readonly HubConnection _connection;
-        //private readonly string twitchWebsocketURI = "wss://irc.fdgt.dev";
 
 
         public Bot(
@@ -33,7 +32,7 @@ namespace MvcChatBot.Agent
 
 
 
-            //ConnectionCredentials credentials = new ConnectionCredentials(_settings.BotName, _settings.AuthToken, twitchWebsocketURI);
+           
             ConnectionCredentials credentials = new ConnectionCredentials(_settings.BotName, _settings.AuthToken);
             var clientOptions = new ClientOptions
             {
@@ -54,15 +53,7 @@ namespace MvcChatBot.Agent
 
             _client.Connect();
 
-            // FdgtTest();
         }
-
-        //public void FdgtTest()
-        //{
-        //    try { _client.SendMessage("#channel", "raid --username drdisrespectlive --viewercount 10000"); }
-        //    catch (Exception ex) { Console.WriteLine(ex.Message); }
-        //}
-
         private void Client_OnLog(object sender, OnLogArgs e)
         {
             Console.WriteLine($"{e.DateTime.ToString()}: {e.BotUsername} - {e.Data}");
