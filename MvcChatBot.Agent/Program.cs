@@ -83,25 +83,15 @@ namespace MvcChatBot.Agent
             };
            
             services.AddSingleton(twitchSettings);
-            var bot = new Bot(twitchSettings, connection);
-            services.AddSingleton(bot);
+            services.AddSingleton(connection);
+            services.AddSingleton<Bot>();
 
             var pubsubService = new TwitchPubSubService(twitchSettings, connection);
             services.AddSingleton(pubsubService);
-
-           
+                      
 
             var serviceProvider = services.BuildServiceProvider();
-
-            var trelloService = serviceProvider.GetService<TrelloService>();
-            var testCard = new NewTrelloCard
-            {
-                UserName = "@LaylaCodesIt",
-                CardName = "Avatars swirling on a raid",
-                Description = "Avatars pulled through to swrirl around when there is a rais",
-                ListName = "Bot Ideas"
-            };
-            trelloService.AddNewCardAsync(testCard);
+            var bot = serviceProvider.GetService<Bot>();
 
             Console.WriteLine("Hello World!");
 

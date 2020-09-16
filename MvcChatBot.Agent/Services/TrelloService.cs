@@ -8,7 +8,6 @@ namespace MvcChatBot.Agent.Services
     {
         private readonly TrelloSettings _trelloSettings;
         private readonly ITrello _trello;
-        //private const string TrelloUri = "https://api.trello.com/";
 
         public TrelloService(TrelloSettings trelloSettings)
         {
@@ -20,16 +19,15 @@ namespace MvcChatBot.Agent.Services
 
         }
 
-       
+
         public void AddNewCardAsync(NewTrelloCard card)
         {
             var list = _trelloSettings
-                .TrelloLists.FirstOrDefault(l=>l.Name.ToLower() == card.ListName.ToLower());
-            var boards = _trello.Boards;
+                .TrelloLists.FirstOrDefault(l => l.Name.ToLower() == card.ListName.ToLower());
             var listActual = _trello.Lists.WithId(list.Id);
             var board = _trello
                 .Boards.WithId(_trelloSettings.BoardId);
-                 
+
             Card trelloCard = _trello
                 .Cards.Add(new NewCard(card.CardName, listActual));
 

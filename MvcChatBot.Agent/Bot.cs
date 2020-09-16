@@ -1,7 +1,14 @@
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
+using MvcChatBot.Agent.Models;
+using MvcChatBot.Agent.Models.Enums;
+using MvcChatBot.Agent.Services;
 using MvcChatBot.Hubs;
 using MvcChatBot.Services;
 using TwitchLib.Client;
@@ -20,19 +27,20 @@ namespace MvcChatBot.Agent
         private readonly TwitchClient _client;
         private readonly TwitchSettings _settings;
         private readonly HubConnection _connection;
+        private readonly TrelloService _trelloService;
 
 
         public Bot(
             TwitchSettings settings,
-            HubConnection connection)
+            HubConnection connection,
+            TrelloService trelloService)
         {
             _settings = settings;
             _connection = connection;
+            _trelloService = trelloService;
             _connection.StartAsync();
 
 
-
-           
             ConnectionCredentials credentials = new ConnectionCredentials(_settings.BotName, _settings.AuthToken);
             var clientOptions = new ClientOptions
             {
@@ -45,7 +53,7 @@ namespace MvcChatBot.Agent
             _client.Initialize(credentials, _settings.Channel);
             _client.OnLog += Client_OnLog;
             _client.OnJoinedChannel += Client_OnJoinedChannel;
-            _client.OnMessageReceived += Client_OnMessageReceived;
+            _client.OnChatCommandReceived += Client_OnCommandReceived;
             _client.OnWhisperReceived += Client_OnWhisperReceived;
             _client.OnRaidNotification += Client_OnRaidNotification;
             _client.OnNewSubscriber += Client_OnNewSubscriber;
@@ -56,7 +64,7 @@ namespace MvcChatBot.Agent
         }
         private void Client_OnLog(object sender, OnLogArgs e)
         {
-            Console.WriteLine($"{e.DateTime.ToString()}: {e.BotUsername} - {e.Data}");
+            Console.WriteLine($"{e.DateTime}: {e.BotUsername} - {e.Data}");
         }
 
         private void Client_OnConnected(object sender, OnConnectedArgs e)
@@ -69,39 +77,56 @@ namespace MvcChatBot.Agent
             Console.WriteLine("Hey guys! I am a bot connected via TwitchLib!");
             _client.SendMessage(e.Channel, "Hello lovelies, I'm Layla's little helper!");
         }
-
-        private async void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
+        private async void Client_OnCommandReceived(object sender, OnChatCommandReceivedArgs e)
         {
 
-            if (e.ChatMessage.Message.StartsWith("!rain", StringComparison.InvariantCultureIgnoreCase))
+            switch (e.Command.CommandText.ToLower())
             {
-                Console.WriteLine(_connection.ConnectionId);
 
-                await _connection.InvokeAsync("SendMessage", e.ChatMessage.DisplayName, "Make it rain!!!", false);
+                case "trello":
+                    _client.SendMessage(_settings.Channel,
+                         "Try typing !todo/!general/!bot/!links \"title of card\" \"The description of the card\"");
+                    break;
+                case "todo":
+                    CreateTrelloCard(e.Command, "todo");
+                    break;
+                case "general":
+                    CreateTrelloCard(e.Command, "General Ideas");
+                    break;
+                case "bot":
+                    CreateTrelloCard(e.Command, "Bot Ideas");
+                    break;
+                case "links":
+                    CreateTrelloCard(e.Command, "links");
+                    break;
+                case "rain":
+                    await MakeItRain(e.Command);
+                    break;
+                case "balls":
+                    await PlayBalls(e.Command);
+                    break;
+                default:
+                    break;
+
 
             }
 
-            
+        }
+        private async Task MakeItRain(ChatCommand e)
+        {
+            Console.WriteLine(_connection.ConnectionId);
 
+            await _connection.InvokeAsync("SendMessage", e.ChatMessage.DisplayName, "Make it rain!!!", false);
 
-            //if (e.ChatMessage.Message.StartsWith("!superrain", StringComparison.InvariantCultureIgnoreCase))
-            //{
-            //    Console.WriteLine(_connection.ConnectionId);
-
-            //    await _connection.InvokeAsync("SendMessage", e.ChatMessage.DisplayName, "It's a torrential downpour of destructopups!!!", true);
-
-            //}
-
-            if (e.ChatMessage.Message.StartsWith("!balls", StringComparison.InvariantCultureIgnoreCase))
+        }
+        private async Task PlayBalls(ChatCommand e)
+        {
+            Console.WriteLine(_connection.ConnectionId);
+            if (e.ChatMessage.IsModerator || e.ChatMessage.IsBroadcaster)
             {
-                Console.WriteLine(_connection.ConnectionId);
-                if (e.ChatMessage.IsModerator || e.ChatMessage.IsBroadcaster)
-                {
-                    _client.SendMessage(e.ChatMessage.Channel, "Time to get your balls in! Type !prizedraw in the chat to be in with a chance to win!");
+                _client.SendMessage(e.ChatMessage.Channel, "Time to get your balls in! Type !prizedraw in the chat to be in with a chance to win!");
 
-                    await _connection.InvokeAsync("PlaySoundMessage", e.ChatMessage.DisplayName, "balls");
-                }
-
+                await _connection.InvokeAsync("PlaySoundMessage", e.ChatMessage.DisplayName, "balls");
             }
         }
 
@@ -123,10 +148,45 @@ namespace MvcChatBot.Agent
         {
             if (e.Subscriber.SubscriptionPlan == SubscriptionPlan.Prime)
                 _client.SendMessage(e.Channel,
-                    $"Welcome {e.Subscriber.DisplayName} to the substers! You just earned 500 points! So kind of you to use your Twitch Prime on this channel!");
+                    $"Welcome {e.Subscriber.DisplayName} to the wafflers! So kind of you to use your Twitch Prime on this channel!");
             else
                 _client.SendMessage(e.Channel,
-                    $"Welcome {e.Subscriber.DisplayName} to the substers! You just earned 500 points!");
+                    $"Welcome {e.Subscriber.DisplayName} to the wafflers!");
+        }
+
+
+        private void CreateTrelloCard(ChatCommand e, string listName)
+        {
+            var messageArray = CardMessageHandler(e.ArgumentsAsString);
+            if (e.ChatMessage.IsModerator
+                   || e.ChatMessage.IsBroadcaster
+                   || e.ChatMessage.IsSubscriber
+                || e.ChatMessage.IsVip)
+            {
+                var testCard = new NewTrelloCard
+                {
+                    UserName = e.ChatMessage.DisplayName,
+                    CardName = messageArray[0],
+                    Description = messageArray[1],
+                    ListName = listName
+                };
+                _trelloService.AddNewCardAsync(testCard);
+            }
+        }
+        private static string GetEnumDescription(Enum value)
+        {
+            FieldInfo fi = value.GetType().GetField(value.ToString()); DescriptionAttribute[] attributes = fi.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[]; if (attributes != null && attributes.Any())
+            {
+                return attributes.First().Description;
+            }
+            return value.ToString();
+        }
+
+
+
+        private string[] CardMessageHandler(string message)
+        {
+            return message.TrimStart('"').TrimEnd('"').Split("\" \"");
         }
     }
 }
