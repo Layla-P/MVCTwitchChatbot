@@ -29,11 +29,8 @@ namespace MvcChatBot.Agent.Services
             _client.OnStreamUp += onStreamUp;
             _client.OnStreamDown += onStreamDown;
             _client.OnRewardRedeemed += onRewardRedeemed;
-            //_client.OnRaidUpdate += onRaidUpdate;
+            _client.OnBitsReceived += onBitsReceived;       
 
-
-            //_client.ListenToVideoPlayback(_settings.Channel);
-           // _client.ListenToRaid(_settings.ChannelId);
             _client.ListenToBitsEvents(_settings.ChannelId);
             _client.ListenToRewards(_settings.ChannelId);
 
@@ -56,10 +53,10 @@ namespace MvcChatBot.Agent.Services
             }
         }
 
-        //private async void onRaidUpdate(object sender, OnRaidUpdateArgs e)
-        //{
-        //    await _connection.InvokeAsync("Raid", e.ViewerCount);
-        //}
+        private async void onBitsReceived(object sender, OnBitsReceivedArgs e)
+        {
+          //todo
+        }
 
         private void onListenResponse(object sender, OnListenResponseArgs e)
         {
