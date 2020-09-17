@@ -4,25 +4,19 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
 using MvcChatBot.Agent.Models;
-using MvcChatBot.Agent.Models.Enums;
-using MvcChatBot.Agent.Services;
-using MvcChatBot.Hubs;
-using MvcChatBot.Services;
 using TwitchLib.Client;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
-using TwitchLib.Client.Extensions;
 using TwitchLib.Client.Models;
 using TwitchLib.Communication.Clients;
 using TwitchLib.Communication.Models;
 
 
-namespace MvcChatBot.Agent
+namespace MvcChatBot.Agent.Services
 {
-    public class Bot
+    public class TwitchClientService
     {
         private readonly TwitchClient _client;
         private readonly TwitchSettings _settings;
@@ -30,7 +24,7 @@ namespace MvcChatBot.Agent
         private readonly TrelloService _trelloService;
 
 
-        public Bot(
+        public TwitchClientService(
             TwitchSettings settings,
             HubConnection connection,
             TrelloService trelloService)
@@ -161,7 +155,7 @@ namespace MvcChatBot.Agent
             if (e.ChatMessage.IsModerator
                    || e.ChatMessage.IsBroadcaster
                    || e.ChatMessage.IsSubscriber
-                || e.ChatMessage.IsVip)
+                   || e.ChatMessage.IsVip)
             {
                 var testCard = new NewTrelloCard
                 {

@@ -1,12 +1,9 @@
 ﻿using System;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Hosting;
-using MvcChatBot.Hubs;
-using MvcChatBot.Services;
 using MvcChatBot.Agent.Services;
 using MvcChatBot.Agent.Models;
 using System.Collections.Generic;
@@ -16,15 +13,7 @@ namespace MvcChatBot.Agent
 {
    
     class Program
-    { 
-       
-        
-        // //credentials (suppressed for privacy)
-        // private static string login_name = "<LOGIN_NAME>";
-        // private static string token = Environment.GetEnvironmentVariable("Token");  //Token should be stored in a safe place
-        // private static List<string> channels_to_join = new List<string>(new string[] { "<CHANNEL_1>", "<CHANNEL_2>" });
-
-        //main function
+    {
         static void Main(string[] args)
         {
             IConfiguration Configuration = new ConfigurationBuilder()
@@ -84,14 +73,14 @@ namespace MvcChatBot.Agent
            
             services.AddSingleton(twitchSettings);
             services.AddSingleton(connection);
-            services.AddSingleton<Bot>();
+            services.AddSingleton<TwitchClientService>();
 
             var pubsubService = new TwitchPubSubService(twitchSettings, connection);
             services.AddSingleton(pubsubService);
                       
 
             var serviceProvider = services.BuildServiceProvider();
-            var bot = serviceProvider.GetService<Bot>();
+            var twitchClientService = serviceProvider.GetService<TwitchClientService>();
 
             Console.WriteLine("Hello World!");
 
