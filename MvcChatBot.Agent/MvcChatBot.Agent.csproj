@@ -18,13 +18,28 @@
       <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.5" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.5" />
       <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.5" />
-      <PackageReference Include="TwitchLib.Client" Version="3.1.5" />
-      <PackageReference Include="TwitchLib.PubSub" Version="3.1.5-CI-20200712-3" />
+
     </ItemGroup>
 
 
     <ItemGroup>
       <ProjectReference Include="..\MvcChatBot\MvcChatBot.csproj" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <Reference Include="TwitchLib.Client">
+        <HintPath>TwitchLib\TwitchLib.Client.dll</HintPath>
+      </Reference>
+      <Reference Include="TwitchLib.Client.Enums">
+        <HintPath>TwitchLib\TwitchLib.Client.Enums.dll</HintPath>
+      </Reference>
+      <Reference Include="TwitchLib.Client.Models">
+        <HintPath>TwitchLib\TwitchLib.Client.Models.dll</HintPath>
+      </Reference>
+      <Reference Include="TwitchLib.Communication">
+        <HintPath>TwitchLib\TwitchLib.Communication.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

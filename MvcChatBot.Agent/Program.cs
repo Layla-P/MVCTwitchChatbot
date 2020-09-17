@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Hosting;
 using MvcChatBot.Hubs;
 using MvcChatBot.Services;
-using MvcChatBot.Agent.Services;
+//using MvcChatBot.Agent.Services;
 
 namespace MvcChatBot.Agent
 {
@@ -61,9 +61,14 @@ namespace MvcChatBot.Agent
 
             Console.WriteLine("Hello World!");
             
-            Console.ReadLine();
+            var command = Console.ReadLine();
             
+            if(command == "raid")
+            {
+                bot.TestRaid();
+            }
 
+            Console.ReadLine();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

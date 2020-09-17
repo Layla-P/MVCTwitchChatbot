@@ -39,7 +39,8 @@ namespace MvcChatBot.Agent
             var clientOptions = new ClientOptions
             {
                 MessagesAllowedInPeriod = 750,
-                ThrottlingPeriod = TimeSpan.FromSeconds(30)
+                ThrottlingPeriod = TimeSpan.FromSeconds(30),
+                ClientType = TwitchLib.Communication.Enums.ClientType.FDGTChat
             };
             WebSocketClient customClient = new WebSocketClient(clientOptions);
             _client = new TwitchClient(customClient);
@@ -67,12 +68,16 @@ namespace MvcChatBot.Agent
             {
                 _client.JoinChannel(_settings.Channel);
                 Thread.Sleep(10000);
-                _client.SendMessage($"#{_settings.Channel}", "raid --username drdisrespectlive --viewercount 27");
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        public void TestRaid()
+        {
+            _client.SendMessage($"#{_settings.Channel}", "raid --username drdisrespectlive --viewercount 27");
         }
 
         private void Client_OnLog(object sender, OnLogArgs e)
