@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -79,7 +80,7 @@ namespace MvcChatBot.Agent.Services
 
                 case "trello":
                     _client.SendMessage(_settings.Channel,
-                         "Try typing !todo/!general/!bot/!links \"title of card\" \"The description of the card\"");
+                         "Try typing !todo/!general/!bot/!links \"title of card\" \"The description of the card or URL\"");
                     break;
                 case "todo":
                     CreateTrelloCard(e.Command, "todo");
@@ -96,6 +97,9 @@ namespace MvcChatBot.Agent.Services
                 case "rain":
                     await MakeItRain(e.Command);
                     break;
+                case "waffle":
+                    await Waffling(e.Command);
+                    break;
                 case "balls":
                     await PlayBalls(e.Command);
                     break;
@@ -108,10 +112,13 @@ namespace MvcChatBot.Agent.Services
         }
         private async Task MakeItRain(ChatCommand e)
         {
-            Console.WriteLine(_connection.ConnectionId);
+            await _connection.InvokeAsync("SendMessage", e.ChatMessage.DisplayName, "Make it rain!!!", false, false);
 
-            await _connection.InvokeAsync("SendMessage", e.ChatMessage.DisplayName, "Make it rain!!!", false);
-
+        }
+        private async Task Waffling(ChatCommand e)
+        {
+            await _connection.InvokeAsync("SendMessage", e.ChatMessage.DisplayName, "Waffling", false, true);
+            _client.SendMessage(e.ChatMessage.Channel, "Layla is waffling!!");
         }
         private async Task PlayBalls(ChatCommand e)
         {
@@ -151,20 +158,33 @@ namespace MvcChatBot.Agent.Services
 
         private void CreateTrelloCard(ChatCommand e, string listName)
         {
-            var messageArray = CardMessageHandler(e.ArgumentsAsString);
-            if (e.ChatMessage.IsModerator
-                   || e.ChatMessage.IsBroadcaster
-                   || e.ChatMessage.IsSubscriber
-                   || e.ChatMessage.IsVip)
+            try
             {
-                var testCard = new NewTrelloCard
+                var messageArray = CardMessageHandler(e.ArgumentsAsString);
+                if (messageArray.Length == 2)
                 {
-                    UserName = e.ChatMessage.DisplayName,
-                    CardName = messageArray[0],
-                    Description = messageArray[1],
-                    ListName = listName
-                };
-                _trelloService.AddNewCardAsync(testCard);
+                    if (e.ChatMessage.IsModerator
+                       || e.ChatMessage.IsBroadcaster
+                       || e.ChatMessage.IsSubscriber
+                       || e.ChatMessage.IsVip)
+                    {
+                        var testCard = new NewTrelloCard
+                        {
+                            UserName = e.ChatMessage.DisplayName,
+                            CardName = messageArray[0],
+                            Description = messageArray[1],
+                            ListName = listName
+                        };
+                        _trelloService.AddNewCardAsync(testCard);
+                    }
+                }
+               
+            }
+            catch (Exception ex)
+            {
+                _client.SendMessage(_settings.Channel,
+                   $"{e.ChatMessage.DisplayName} That card wasn't created, sorry!!");
+                Console.WriteLine($"Failed to write Trello card: {ex.Message}");
             }
         }
         private static string GetEnumDescription(Enum value)

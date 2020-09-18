@@ -3,9 +3,10 @@
 var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
 
-connection.on("LaylaMessage", function (user, message, isSuper) {
-    let count = isSuper ? 50 : 7;
-    handleClick(count);
+connection.on("LaylaMessage", function (user, message, isSuper, isWaffle) {
+    let count = isSuper ? 50 : 13;
+    let image = isWaffle ? "waffle.png" : "destructopup-112.png";
+    handleClick(count, image);
 });
 
 connection.start().then(function () {
@@ -21,7 +22,7 @@ connection.start().then(function () {
 const world = document.querySelector(".boops");
 const { Engine, Render, Runner, World, Bodies } = Matter;
 
-function createBall() {
+function createBall(image) {
     const ball = Bodies.circle(Math.round(Math.random() * 1280), -30, 25, {
         angle: Math.PI * (Math.random() * 2 - 1),
         friction: 0.001,
@@ -29,7 +30,7 @@ function createBall() {
         restitution: 0.8,
         render: {
             sprite: {
-                texture: "destructopup-112.png"
+                texture: image                
             }
         }
     });
@@ -69,10 +70,10 @@ Runner.run(runner, engine);
 
 World.add(engine.world, [ground, leftWall, rightWall]);
 
-const handleClick = (count) => {
+const handleClick = (count, image) => {
 
     for (let i = 0; i < count; i++) {
-        World.add(engine.world, [createBall()])
+        World.add(engine.world, [createBall(image)])
     }
 
 };

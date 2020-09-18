@@ -25,7 +25,7 @@ function createBall() {
         restitution: 0.8,
         render: {
             sprite: {
-                texture: "destructopup-112.png"
+                texture: "waffle.png"
             }
         }
     });

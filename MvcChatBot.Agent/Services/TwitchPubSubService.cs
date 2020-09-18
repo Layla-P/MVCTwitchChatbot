@@ -49,7 +49,7 @@ namespace MvcChatBot.Agent.Services
            if(e.RewardTitle == "superRain")
             {
 
-                await _connection.InvokeAsync("SendMessage", e.DisplayName, "It's a torrential downpour of destructopups!!!", true);
+                await _connection.InvokeAsync("SendMessage", e.DisplayName, "It's a torrential downpour of destructopups!!!", true, false);
             }
         }
 
