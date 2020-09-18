@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using MvcChatBot.Agent.Models;
+using MvcChatBot.Models;
 using TwitchLib.Client;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
@@ -52,6 +53,7 @@ namespace MvcChatBot.Agent.Services
             _client.OnWhisperReceived += Client_OnWhisperReceived;
             _client.OnRaidNotification += Client_OnRaidNotification;
             _client.OnNewSubscriber += Client_OnNewSubscriber;
+            _client.OnGiftedSubscription += Client_OnGiftSubscriber;
             _client.OnConnected += Client_OnConnected;
 
             _client.Connect();
@@ -112,12 +114,12 @@ namespace MvcChatBot.Agent.Services
         }
         private async Task MakeItRain(ChatCommand e)
         {
-            await _connection.InvokeAsync("SendMessage", e.ChatMessage.DisplayName, "Make it rain!!!", false, false);
+            await _connection.InvokeAsync("SendMessage", e.ChatMessage.DisplayName, "Make it rain!!!", MessageTypeEnum.Rain);
 
         }
         private async Task Waffling(ChatCommand e)
         {
-            await _connection.InvokeAsync("SendMessage", e.ChatMessage.DisplayName, "Waffling", false, true);
+            await _connection.InvokeAsync("SendMessage", e.ChatMessage.DisplayName, "Waffling", MessageTypeEnum.Waffle);
             _client.SendMessage(e.ChatMessage.Channel, "Layla is waffling!!");
         }
         private async Task PlayBalls(ChatCommand e)
@@ -153,6 +155,20 @@ namespace MvcChatBot.Agent.Services
             else
                 _client.SendMessage(e.Channel,
                     $"Welcome {e.Subscriber.DisplayName} to the wafflers!");
+        }
+
+        private async void Client_OnGiftSubscriber(object sender, OnGiftedSubscriptionArgs e)
+        {
+            try
+            {
+                await _connection.InvokeAsync("SendMessage", e.GiftedSubscription.DisplayName, "Waffling", MessageTypeEnum.Cannon);
+                _client.SendMessage(e.Channel,
+                       $"Woweee! {e.GiftedSubscription.DisplayName} just gifted {e.GiftedSubscription}! Thank you so much <3");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Gifted sub action failed: {ex.Message}");
+            }
         }
 
 

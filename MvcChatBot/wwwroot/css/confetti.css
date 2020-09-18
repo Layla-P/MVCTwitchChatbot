@@ -1,0 +1,44 @@
+﻿
+
+#confetti {
+    height: 10px;
+    width: 10px;
+    align-self: flex-end;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+}
+
+
+.confetti {
+    position: absolute;
+    z-index: 1;
+}
+
+@keyframes rainbow {
+
+    0% {
+        background: linear-gradient(-70deg, #f44336 0%, #f44336 20%, #9c27b0 20%, #9c27b0 40%, #FFA726 40%, #FFA726 60%, #2196f3 60%, #2196f3 80%, #66BB6A 80%, #66BB6A 100%);
+    }
+
+    20% {
+        background: linear-gradient(-70deg, #9c27b0 0%, #9c27b0 20%, #FFA726 20%, #FFA726 40%, #2196f3 40%, #2196f3 60%, #66BB6A 60%, #66BB6A 80%, #f44336 80%, #f44336 100%);
+    }
+
+    40% {
+        background: linear-gradient(-70deg, #FFA726 0%, #FFA726 20%, #2196f3 20%, #2196f3 40%, #66BB6A 40%, #66BB6A 60%, #f44336 60%, #f44336 80%, #9c27b0 80%, #9c27b0 100%);
+    }
+
+    60% {
+        background: linear-gradient(-70deg, #2196f3 0%, #2196f3 20%, #66BB6A 20%, #66BB6A 40%, #f44336 40%, #f44336 60%, #9c27b0 60%, #9c27b0 80%, #FFA726 80%, #FFA726 100%);
+    }
+
+    80% {
+        background: linear-gradient(-70deg, #66BB6A 0%, #66BB6A 20%, #f44336 20%, #f44336 40%, #9c27b0 40%, #9c27b0 60%, #FFA726 60%, #FFA726 80%, #2196f3 80%, #2196f3 100%);
+    }
+
+    100% {
+        background: linear-gradient(-70deg, #f44336 0%, #f44336 20%, #9c27b0 20%, #9c27b0 40%, #FFA726 40%, #FFA726 60%, #2196f3 60%, #2196f3 80%, #66BB6A 80%, #66BB6A 100%);
+    }
+}

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
+using MvcChatBot.Models;
 using System;
 using TwitchLib.PubSub;
 using TwitchLib.PubSub.Events;
@@ -49,7 +50,7 @@ namespace MvcChatBot.Agent.Services
            if(e.RewardTitle == "superRain")
             {
 
-                await _connection.InvokeAsync("SendMessage", e.DisplayName, "It's a torrential downpour of destructopups!!!", true, false);
+                await _connection.InvokeAsync("SendMessage", e.DisplayName, "It's a torrential downpour of destructopups!!!", MessageTypeEnum.SuperRain);
             }
         }
 
