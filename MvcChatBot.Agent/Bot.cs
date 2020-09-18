@@ -55,10 +55,6 @@ namespace MvcChatBot.Agent
             _client.OnConnected += Client_OnConnected;
 
             _client.Connect();
-
-            Thread.Sleep(10000);
-
-            FdgtTest();
         }
 
 
@@ -66,8 +62,7 @@ namespace MvcChatBot.Agent
         {
             try
             {
-                _client.JoinChannel(_settings.Channel);
-                Thread.Sleep(10000);
+                TestRaid();
             }
             catch (Exception ex)
             {
@@ -77,7 +72,7 @@ namespace MvcChatBot.Agent
 
         public void TestRaid()
         {
-            _client.SendMessage($"#{_settings.Channel}", "raid --username drdisrespectlive --viewercount 27");
+            _client.SendMessage(_settings.Channel, "raid --username drdisrespectlive --viewercount 27");
         }
 
         private void Client_OnLog(object sender, OnLogArgs e)
@@ -88,12 +83,15 @@ namespace MvcChatBot.Agent
         private void Client_OnConnected(object sender, OnConnectedArgs e)
         {
             Console.WriteLine($"Connected to {e.AutoJoinChannel}");
+           
         }
 
         private void Client_OnJoinedChannel(object sender, OnJoinedChannelArgs e)
         {
             Console.WriteLine("Hey guys! I am a bot connected via TwitchLib!");
             _client.SendMessage(e.Channel, "Hello lovelies, I'm Layla's little helper!");
+            FdgtTest();
+
         }
 
         private async void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
