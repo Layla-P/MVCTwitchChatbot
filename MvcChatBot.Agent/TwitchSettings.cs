@@ -7,5 +7,6 @@ namespace MvcChatBot.Agent
         public string Channel { get; set; }
         public string ChannelId { get; set; }
         public string ChannelAuthToken { get; set; }
+        public string ClientId { get; set; }
     }
 }

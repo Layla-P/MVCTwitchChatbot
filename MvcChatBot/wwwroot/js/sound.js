@@ -18,9 +18,15 @@ function playSound(message) {
 
     switch (message) {
         case 'balls':
-            clip = 'layla_balls.mp3';
+           // clip = 'layla_balls.mp3';
+            clip = "swag.mp3"
             break;
-       
+        case 'cannon':
+            clip = 'party.mp3';
+            break;
+        case 'follow':
+            clip = 'tada.mp3';
+            break;
         default:
             clip = null;
     }

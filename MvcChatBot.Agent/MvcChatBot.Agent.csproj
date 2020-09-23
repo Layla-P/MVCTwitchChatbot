@@ -22,6 +22,7 @@
       <PackageReference Include="trellonet" Version="0.6.2" />
       <PackageReference Include="TwitchLib.Client" Version="3.1.5" />
       <PackageReference Include="TwitchLib.PubSub" Version="3.1.5-CI-20200712-3" />
+      <PackageReference Include="TwitchLib.Api" Version="3.1.3" />
     </ItemGroup>
 
 

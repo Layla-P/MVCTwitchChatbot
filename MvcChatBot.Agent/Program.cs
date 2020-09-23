@@ -52,15 +52,8 @@ namespace MvcChatBot.Agent
             };
 
 
-            //var trelloSettings = services.Configure<TrelloSettings>(Configuration.GetSection("TrelloService"));
             services.AddSingleton(trelloSettings);
             services.AddSingleton<TrelloService>();
-            // var trelloService = new TrelloService(trelloSettings);
-            //services.AddSingleton(trelloService);
-            //should work but doesn't
-            //services.AddOptions();
-            //services.Configure<TrelloSettings>(Configuration.GetSection("TrelloService"));
-            //services.AddSingleton<TrelloService>();
 
             TwitchSettings twitchSettings = new TwitchSettings
             {
@@ -68,19 +61,22 @@ namespace MvcChatBot.Agent
                 AuthToken = Configuration.GetValue<string>("TwitchSettings:AuthToken"),
                 Channel = Configuration.GetValue<string>("TwitchSettings:Channel"),
                 ChannelId = Configuration.GetValue<string>("TwitchSettings:ChannelId"),
-                ChannelAuthToken = Configuration.GetValue<string>("TwitchSettings:ChannelAuthToken")
+                ChannelAuthToken = Configuration.GetValue<string>("TwitchSettings:ChannelAuthToken"),
+                ClientId = Configuration.GetValue<string>("TwitchSettings:ClientId")
             };
            
             services.AddSingleton(twitchSettings);
             services.AddSingleton(connection);
             services.AddSingleton<TwitchClientService>();
 
-            var pubsubService = new TwitchPubSubService(twitchSettings, connection);
-            services.AddSingleton(pubsubService);
-                      
+            services.AddSingleton<TwitchPubSubService>();
 
             var serviceProvider = services.BuildServiceProvider();
             var twitchClientService = serviceProvider.GetService<TwitchClientService>();
+            //api service not currently in use
+            //var twitchApiService = serviceProvider.GetService<TwitchApiService>();
+            var twitchPubSubService = serviceProvider.GetService<TwitchPubSubService>();
+
 
             Console.WriteLine("Hello World!");
 

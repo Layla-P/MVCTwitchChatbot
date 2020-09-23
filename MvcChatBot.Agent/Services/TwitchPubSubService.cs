@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
 using MvcChatBot.Models;
+using RestSharp.Authenticators;
 using System;
 using TwitchLib.PubSub;
 using TwitchLib.PubSub.Events;
@@ -30,9 +31,9 @@ namespace MvcChatBot.Agent.Services
             _client.OnStreamUp += onStreamUp;
             _client.OnStreamDown += onStreamDown;
             _client.OnRewardRedeemed += onRewardRedeemed;
-            _client.OnBitsReceived += onBitsReceived;       
+            _client.OnFollow += onFollow;
 
-            _client.ListenToBitsEvents(_settings.ChannelId);
+            _client.ListenToFollows(_settings.ChannelId);
             _client.ListenToRewards(_settings.ChannelId);
 
             _client.Connect();
@@ -42,7 +43,7 @@ namespace MvcChatBot.Agent.Services
         private void onPubSubServiceConnected(object sender, EventArgs e)
         {
             // SendTopics accepts an oauth optionally, which is necessary for some topics
-            _client.SendTopics(_settings.ChannelAuthToken);
+            _client.SendTopics($"oauth:{_settings.ChannelAuthToken}");
         }
         //https://docs.microsoft.com/en-us/archive/msdn-magazine/2013/march/async-await-best-practices-in-asynchronous-programming#:~:text=Avoid%20Async%20Void
         private async void onRewardRedeemed(object sender, OnRewardRedeemedArgs e)
@@ -54,9 +55,10 @@ namespace MvcChatBot.Agent.Services
             }
         }
 
-        private async void onBitsReceived(object sender, OnBitsReceivedArgs e)
+        private async void onFollow(object sender, OnFollowArgs e)
         {
-          //todo
+            Console.WriteLine($"follow from pubsub {e.DisplayName}");
+            await _connection.InvokeAsync("PlaySoundMessage", e.DisplayName, "follow");
         }
 
         private void onListenResponse(object sender, OnListenResponseArgs e)

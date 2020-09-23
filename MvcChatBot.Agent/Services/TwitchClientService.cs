@@ -1,9 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net.Http;
 using System.Reflection;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using MvcChatBot.Agent.Models;
@@ -24,6 +26,9 @@ namespace MvcChatBot.Agent.Services
         private readonly TwitchSettings _settings;
         private readonly HubConnection _connection;
         private readonly TrelloService _trelloService;
+        private List<User> liveCodersTeamMembers;
+        private List<User> twilioTeamMembers;
+        private List<string> welcomedMemberIds = new List<string>();
 
 
         public TwitchClientService(
@@ -37,10 +42,10 @@ namespace MvcChatBot.Agent.Services
             _connection.StartAsync();
 
 
+
             ConnectionCredentials credentials = new ConnectionCredentials(_settings.BotName, _settings.AuthToken);
             var clientOptions = new ClientOptions
             {
-
                 MessagesAllowedInPeriod = 750,
                 ThrottlingPeriod = TimeSpan.FromSeconds(30)
             };
@@ -54,6 +59,8 @@ namespace MvcChatBot.Agent.Services
             _client.OnRaidNotification += Client_OnRaidNotification;
             _client.OnNewSubscriber += Client_OnNewSubscriber;
             _client.OnGiftedSubscription += Client_OnGiftSubscriber;
+            _client.OnMessageReceived += Client_MessageReceived;
+
             _client.OnConnected += Client_OnConnected;
 
             _client.Connect();
@@ -63,16 +70,71 @@ namespace MvcChatBot.Agent.Services
         {
             Console.WriteLine($"{e.DateTime}: {e.BotUsername} - {e.Data}");
         }
-
         private void Client_OnConnected(object sender, OnConnectedArgs e)
         {
             Console.WriteLine($"Connected to {e.AutoJoinChannel}");
         }
-
-        private void Client_OnJoinedChannel(object sender, OnJoinedChannelArgs e)
+        private async void Client_OnJoinedChannel(object sender, OnJoinedChannelArgs e)
         {
             Console.WriteLine("Hey guys! I am a bot connected via TwitchLib!");
             _client.SendMessage(e.Channel, "Hello lovelies, I'm Layla's little helper!");
+
+            liveCodersTeamMembers = await GetTeamMembers("livecoders");
+            twilioTeamMembers = await GetTeamMembers("twilio");
+        }
+        private void Client_MessageReceived(object sender, OnMessageReceivedArgs e)
+        {
+            var userId = e.ChatMessage.UserId;
+            var userDisplayName = e.ChatMessage.DisplayName;
+            var username = e.ChatMessage.Username;
+            if (e.ChatMessage.IsVip || e.ChatMessage.IsSubscriber || e.ChatMessage.IsModerator)
+            {
+                if (!welcomedMemberIds.Contains(userId))
+                {
+                    welcomedMemberIds.Add(userId);
+                    _client.SendMessage(e.ChatMessage.Channel, $"Welcome back {userDisplayName}, thanks for choosing to hang out with us 🤗💖");
+                }
+            }
+            else if (twilioTeamMembers.Any(c => c._Id == userId))
+            {
+                if (!welcomedMemberIds.Contains(userId))
+                {
+                    welcomedMemberIds.Add(userId);
+                    var url = $"https://twitch.tv/{username}";
+                    _client.SendMessage(e.ChatMessage.Channel, $"Welcome to chat, {userDisplayName}! They are a member of Twilio TV 🎉! Check them out on {url}");
+                }
+            }
+            else if (liveCodersTeamMembers.Any(c => c._Id == userId))
+            {
+                if (!welcomedMemberIds.Contains(userId))
+                {
+                    welcomedMemberIds.Add(userId);
+                    var url = $"https://twitch.tv/{username}";
+                    _client.SendMessage(e.ChatMessage.Channel, $"Welcome to chat, {userDisplayName}! They are a member of the Livecoders 🎉! Check them out on {url}");
+                }
+            }
+            
+
+        }
+        private async Task<List<User>> GetTeamMembers(string teamName)
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Add("Client-ID", _settings.ClientId);
+                client.DefaultRequestHeaders.Add("Accept", "application/vnd.twitchtv.v5+json");
+                var response = await client.GetAsync($"https://api.twitch.tv/kraken/teams/{teamName}");
+                var jsonString = await response.Content.ReadAsStringAsync();
+
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+
+                var teamResponse = JsonSerializer.Deserialize<TeamResponse>(jsonString, options);
+
+                return teamResponse.Users;
+            }
+
         }
         private async void Client_OnCommandReceived(object sender, OnChatCommandReceivedArgs e)
         {
@@ -102,7 +164,10 @@ namespace MvcChatBot.Agent.Services
                 case "waffle":
                     await Waffling(e.Command);
                     break;
-                case "balls":
+                //case "balls":
+                //    await PlayBalls(e.Command);
+                //    break;
+                case "swag":
                     await PlayBalls(e.Command);
                     break;
                 default:
@@ -127,12 +192,11 @@ namespace MvcChatBot.Agent.Services
             Console.WriteLine(_connection.ConnectionId);
             if (e.ChatMessage.IsModerator || e.ChatMessage.IsBroadcaster)
             {
-                _client.SendMessage(e.ChatMessage.Channel, "Time to get your balls in! Type !prizedraw in the chat to be in with a chance to win!");
-
+                // _client.SendMessage(e.ChatMessage.Channel, "Time to get your balls in! Type !prizedraw in the chat to be in with a chance to win!");
+                _client.SendMessage(e.ChatMessage.Channel, "Type !winbooty to be in for a chance of winning some booty!");
                 await _connection.InvokeAsync("PlaySoundMessage", e.ChatMessage.DisplayName, "balls");
             }
         }
-
         private async void Client_OnRaidNotification(object sender, OnRaidNotificationArgs e)
         {
             int.TryParse(e.RaidNotification.MsgParamViewerCount, out var count);
@@ -146,7 +210,6 @@ namespace MvcChatBot.Agent.Services
             if (e.WhisperMessage.Username == "my_friend")
                 _client.SendWhisper(e.WhisperMessage.Username, "Hey! Whispers are so cool!!");
         }
-
         private void Client_OnNewSubscriber(object sender, OnNewSubscriberArgs e)
         {
             if (e.Subscriber.SubscriptionPlan == SubscriptionPlan.Prime)
@@ -156,12 +219,12 @@ namespace MvcChatBot.Agent.Services
                 _client.SendMessage(e.Channel,
                     $"Welcome {e.Subscriber.DisplayName} to the wafflers!");
         }
-
         private async void Client_OnGiftSubscriber(object sender, OnGiftedSubscriptionArgs e)
         {
             try
             {
                 await _connection.InvokeAsync("SendMessage", e.GiftedSubscription.DisplayName, "Waffling", MessageTypeEnum.Cannon);
+                await _connection.InvokeAsync("PlaySoundMessage", e.GiftedSubscription.DisplayName, "cannon");
                 _client.SendMessage(e.Channel,
                        $"Woweee! {e.GiftedSubscription.DisplayName} just gifted {e.GiftedSubscription}! Thank you so much <3");
             }
@@ -170,8 +233,6 @@ namespace MvcChatBot.Agent.Services
                 Console.WriteLine($"Gifted sub action failed: {ex.Message}");
             }
         }
-
-
         private void CreateTrelloCard(ChatCommand e, string listName)
         {
             try
@@ -194,7 +255,7 @@ namespace MvcChatBot.Agent.Services
                         _trelloService.AddNewCardAsync(testCard);
                     }
                 }
-               
+
             }
             catch (Exception ex)
             {
@@ -211,9 +272,6 @@ namespace MvcChatBot.Agent.Services
             }
             return value.ToString();
         }
-
-
-
         private string[] CardMessageHandler(string message)
         {
             return message.TrimStart('"').TrimEnd('"').Split("\" \"");
