@@ -27,7 +27,6 @@ namespace MvcChatBot.Agent.Services
         private readonly HubConnection _connection;
         private readonly TrelloService _trelloService;
         private List<User> liveCodersTeamMembers;
-        private List<User> twilioTeamMembers;
         private List<string> welcomedMemberIds = new List<string>();
 
 
@@ -80,7 +79,6 @@ namespace MvcChatBot.Agent.Services
             _client.SendMessage(e.Channel, "Hello lovelies, I'm Layla's little helper!");
 
             liveCodersTeamMembers = await GetTeamMembers("livecoders");
-            twilioTeamMembers = await GetTeamMembers("twilio");
         }
         private void Client_MessageReceived(object sender, OnMessageReceivedArgs e)
         {
@@ -93,15 +91,6 @@ namespace MvcChatBot.Agent.Services
                 {
                     welcomedMemberIds.Add(userId);
                     _client.SendMessage(e.ChatMessage.Channel, $"Welcome back {userDisplayName}, thanks for choosing to hang out with us 🤗💖");
-                }
-            }
-            else if (twilioTeamMembers.Any(c => c._Id == userId))
-            {
-                if (!welcomedMemberIds.Contains(userId))
-                {
-                    welcomedMemberIds.Add(userId);
-                    var url = $"https://twitch.tv/{username}";
-                    _client.SendMessage(e.ChatMessage.Channel, $"Welcome to chat, {userDisplayName}! They are a member of Twilio TV 🎉! Check them out on {url}");
                 }
             }
             else if (liveCodersTeamMembers.Any(c => c._Id == userId))
@@ -229,7 +218,7 @@ namespace MvcChatBot.Agent.Services
                 await _connection.InvokeAsync("SendMessage", e.GiftedSubscription.DisplayName, "Waffling", MessageTypeEnum.Cannon);
                await _connection.InvokeAsync("PlaySoundMessage", e.GiftedSubscription.DisplayName, "cannon");
                 _client.SendMessage(e.Channel,
-                       $"Woweee! {e.GiftedSubscription.DisplayName} just gifted {e.GiftedSubscription.MsgParamRecipientDisplayName} a subscritption! Thank you so much <3");
+                       $"Woweee! {e.GiftedSubscription.DisplayName} just gifted {e.GiftedSubscription.MsgParamRecipientDisplayName} a subscription! Thank you so much <3");
             }
             catch (Exception ex)
             {
