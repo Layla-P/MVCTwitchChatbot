@@ -8,8 +8,10 @@ $(document).ready(function() {
     const maxHeight = 15;
     const minWidth = 20;
     const maxWidth = 30;
-    const startPosTop = 50;
-    const startPosLeft = 135;
+    //const startPosTop = 50;
+    //const startPosLeft = 135;
+    const startPosTop = -10;
+    const startPosLeft = -10;
     const floor = 100;
     const minFireLeft = 500;
     const maxFireLeft = 1200;
@@ -96,8 +98,11 @@ $(document).ready(function() {
                 
                 // Left property for the element
                 const cLeft = Rand(minFireLeft, maxFireLeft);
+
+
                 
                 // Top property for the element
+                //const cTop = floor + "%";
                 const cTop = floor + "%";
                 
                 // Transform (i.e. the rotational movement) for the element

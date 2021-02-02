@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using MvcChatBot.Agent.Models;
 using TrelloNet;
 
@@ -20,20 +21,30 @@ namespace MvcChatBot.Agent.Services
         }
 
 
-        public void AddNewCardAsync(NewTrelloCard card)
+        public string AddNewCardAsync(NewTrelloCard card)
         {
-            var list = _trelloSettings
-                .TrelloLists.FirstOrDefault(l => l.Name.ToLower() == card.ListName.ToLower());
-            var listActual = _trello.Lists.WithId(list.Id);
-            var board = _trello
-                .Boards.WithId(_trelloSettings.BoardId);
+            try
+            {
+                var list = _trelloSettings
+               .TrelloLists.FirstOrDefault(l => l.Name.ToLower() == card.ListName.ToLower());
+                var listActual = _trello.Lists.WithId(list.Id);
+                var board = _trello
+                    .Boards.WithId(_trelloSettings.BoardId);
 
-            Card trelloCard = _trello
-                .Cards.Add(new NewCard(card.CardName, listActual));
+                Card trelloCard = _trello
+                    .Cards.Add(new NewCard(card.CardName, listActual));
 
-            trelloCard.Desc = $"{card.UserName} suggests {card.Description}";
+                trelloCard.Desc = $"{card.UserName} suggests {card.Description}";
 
-            _trello.Cards.Update(trelloCard);
+                _trello.Cards.Update(trelloCard);
+
+                return "Your Trello card was added, thank you for your input!";
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Error adding card: {ex}");
+                return "There was an error adding your card :-(";
+            }
         }
     }
 }

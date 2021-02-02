@@ -48,7 +48,7 @@ namespace MvcChatBot.Agent.Services
         //https://docs.microsoft.com/en-us/archive/msdn-magazine/2013/march/async-await-best-practices-in-asynchronous-programming#:~:text=Avoid%20Async%20Void
         private async void onRewardRedeemed(object sender, OnRewardRedeemedArgs e)
         {
-           if(e.RewardTitle == "superRain")
+           if(e.RewardTitle == "puppy-rain")
             {
 
                 await _connection.InvokeAsync("SendMessage", e.DisplayName, "It's a torrential downpour of destructopups!!!", MessageTypeEnum.SuperRain);

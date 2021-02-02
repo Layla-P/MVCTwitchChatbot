@@ -25,7 +25,7 @@ function playSound(message) {
             clip = 'party.mp3';
             break;
         case 'follow':
-            clip = 'tada.mp3';
+            clip = 'follower.mp3';
             break;
         default:
             clip = null;

@@ -25,7 +25,7 @@ namespace MvcChatBot.Agent
             
  
             var connection = new HubConnectionBuilder()
-                .WithUrl("http://localhost:52179/ChatHub")
+                .WithUrl("http://localhost:52172/ChatHub")
                 .WithAutomaticReconnect()
                 .Build();
            

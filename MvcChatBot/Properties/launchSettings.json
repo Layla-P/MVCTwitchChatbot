@@ -3,8 +3,7 @@
     "windowsAuthentication": false, 
     "anonymousAuthentication": true, 
     "iisExpress": {
-      "applicationUrl": "http://localhost:52179",
-      "sslPort": 44366
+      "applicationUrl": "http://localhost:52172"
     }
   },
   "profiles": {
@@ -18,7 +17,7 @@
     "MvcChatBot": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "http://localhost:52179",
+      "applicationUrl": "http://localhost:52172",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

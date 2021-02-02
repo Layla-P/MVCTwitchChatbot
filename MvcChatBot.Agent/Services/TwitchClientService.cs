@@ -113,7 +113,7 @@ namespace MvcChatBot.Agent.Services
                     _client.SendMessage(e.ChatMessage.Channel, $"Welcome to chat, {userDisplayName}! They are a member of the Livecoders 🎉! Check them out on {url}");
                 }
             }
-            
+
 
         }
         private async Task<List<User>> GetTeamMembers(string teamName)
@@ -158,7 +158,7 @@ namespace MvcChatBot.Agent.Services
                 case "links":
                     CreateTrelloCard(e.Command, "links");
                     break;
-                case "rain":
+                case "puprain":
                     await MakeItRain(e.Command);
                     break;
                 case "waffle":
@@ -169,6 +169,9 @@ namespace MvcChatBot.Agent.Services
                 //    break;
                 case "swag":
                     await PlayBalls(e.Command);
+                    break;
+                case "laylatest":
+                    await Test(e.Command);
                     break;
                 default:
                     break;
@@ -214,7 +217,7 @@ namespace MvcChatBot.Agent.Services
         {
             if (e.Subscriber.SubscriptionPlan == SubscriptionPlan.Prime)
                 _client.SendMessage(e.Channel,
-                    $"Welcome {e.Subscriber.DisplayName} to the wafflers! So kind of you to use your Twitch Prime on this channel!");
+                    $"Welcome {e.Subscriber.DisplayName} to the wafflers! Thank you for using your Twitch Prime on this channel!");
             else
                 _client.SendMessage(e.Channel,
                     $"Welcome {e.Subscriber.DisplayName} to the wafflers!");
@@ -224,27 +227,33 @@ namespace MvcChatBot.Agent.Services
             try
             {
                 await _connection.InvokeAsync("SendMessage", e.GiftedSubscription.DisplayName, "Waffling", MessageTypeEnum.Cannon);
-                await _connection.InvokeAsync("PlaySoundMessage", e.GiftedSubscription.DisplayName, "cannon");
+               await _connection.InvokeAsync("PlaySoundMessage", e.GiftedSubscription.DisplayName, "cannon");
                 _client.SendMessage(e.Channel,
-                       $"Woweee! {e.GiftedSubscription.DisplayName} just gifted {e.GiftedSubscription}! Thank you so much <3");
+                       $"Woweee! {e.GiftedSubscription.DisplayName} just gifted {e.GiftedSubscription.MsgParamRecipientDisplayName} a subscritption! Thank you so much <3");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Gifted sub action failed: {ex.Message}");
             }
         }
+
+        private async Task Test(ChatCommand e)
+        {
+            await _connection.InvokeAsync("SendMessage", "TEST", "TEST", MessageTypeEnum.Cannon);
+        }
         private void CreateTrelloCard(ChatCommand e, string listName)
         {
             try
             {
-                var messageArray = CardMessageHandler(e.ArgumentsAsString);
-                if (messageArray.Length == 2)
-                {
-                    if (e.ChatMessage.IsModerator
+                if (e.ChatMessage.IsModerator
                        || e.ChatMessage.IsBroadcaster
                        || e.ChatMessage.IsSubscriber
                        || e.ChatMessage.IsVip)
+                {
+                    var messageArray = CardMessageHandler(e.ArgumentsAsString);
+                    if (messageArray.Length == 2)
                     {
+
                         var testCard = new NewTrelloCard
                         {
                             UserName = e.ChatMessage.DisplayName,
@@ -252,8 +261,18 @@ namespace MvcChatBot.Agent.Services
                             Description = messageArray[1],
                             ListName = listName
                         };
-                        _trelloService.AddNewCardAsync(testCard);
+                        var trelloResponse = _trelloService.AddNewCardAsync(testCard);
+                        _client.SendMessage(_settings.Channel, trelloResponse);
                     }
+                    else
+                    {
+                        _client.SendMessage(_settings.Channel, "Hmmm, there was an error parsing your Trello card, please type !trello to see how to format a card command.");
+                    }
+                }
+                else
+                {
+                    _client.SendMessage(_settings.Channel,
+                     "Adding a Trello card is only available to subscribers and VIPs, but thanks for getting involved!");
                 }
 
             }
