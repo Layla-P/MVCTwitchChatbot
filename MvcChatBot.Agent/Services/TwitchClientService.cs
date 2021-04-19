@@ -37,7 +37,7 @@ namespace MvcChatBot.Agent.Services
             TrelloService trelloService)
         {
             _settings = settings;
-            _connection = connection;           
+            _connection = connection;        
             _trelloService = trelloService;
             _connection.StartAsync();
 
@@ -104,7 +104,7 @@ namespace MvcChatBot.Agent.Services
                 }
             }
 
-            if(e.ChatMessage.Message.StartsWith("!stats"))
+            if(e.ChatMessage.MFFessage.StartsWith("!stats"))
             {
                 _client.SendMessage(e.ChatMessage.Channel, _twitchApiService.GetCurrentStats());
             }

@@ -17,7 +17,7 @@ namespace MvcChatBot.Agent.Services
         private TwitchAPI API;
         //private FollowerService FollowerService;
         private readonly TwitchSettings _settings;
-        private readonly HubConnection _connection;        
+        private readonly HubConnection _connection;  
 
         public TwitchApiService(TwitchSettings settings, HubConnection connection)
         {
@@ -42,7 +42,7 @@ namespace MvcChatBot.Agent.Services
         private async Task<string> GetStatsAsync()
         {
             var currentStream = await API.V5.Streams.GetStreamByUserAsync(_settings.ChannelId);
-            return $"Current stats for LaylaCodesIt: {currentStream.Stream.Viewers} viewers, {currentStream.Stream.Channel.Views} views and {currentStream.Stream.Channel.Followers}.";
+            return $"Current stats for {currentStream.Stream.Channel.DisplayName}: {currentStream.Stream.Viewers} viewers, {currentStream.Stream.Channel.Views} views and {currentStream.Stream.Channel.Followers}.";
         }
 
         private async Task ConfigLiveMonitorAsync()
