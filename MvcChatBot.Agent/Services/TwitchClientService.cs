@@ -24,6 +24,7 @@ namespace MvcChatBot.Agent.Services
     {
         private readonly TwitchClient _client;
         private readonly TwitchSettings _settings;
+        private readonly TwitchApiService _twitchApiService;
         private readonly HubConnection _connection;
         private readonly TrelloService _trelloService;
         private List<User> liveCodersTeamMembers;
@@ -36,11 +37,9 @@ namespace MvcChatBot.Agent.Services
             TrelloService trelloService)
         {
             _settings = settings;
-            _connection = connection;
+            _connection = connection;           
             _trelloService = trelloService;
             _connection.StartAsync();
-
-
 
             ConnectionCredentials credentials = new ConnectionCredentials(_settings.BotName, _settings.AuthToken);
             var clientOptions = new ClientOptions
@@ -63,6 +62,8 @@ namespace MvcChatBot.Agent.Services
             _client.OnConnected += Client_OnConnected;
 
             _client.Connect();
+            
+            _twitchApiService = new TwitchApiService(_settings, _connection);
 
         }
         private void Client_OnLog(object sender, OnLogArgs e)
@@ -103,7 +104,10 @@ namespace MvcChatBot.Agent.Services
                 }
             }
 
-
+            if(e.ChatMessage.Message.StartsWith("!stats"))
+            {
+                _client.SendMessage(e.ChatMessage.Channel, _twitchApiService.GetCurrentStats());
+            }
         }
         private async Task<List<User>> GetTeamMembers(string teamName)
         {
