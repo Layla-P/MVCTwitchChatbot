@@ -34,7 +34,8 @@ namespace MvcChatBot.Agent.Services
         public TwitchClientService(
             TwitchSettings settings,
             HubConnection connection,
-            TrelloService trelloService)
+            TrelloService trelloService,
+            TwitchApiService twitchApiService)
         {
             _settings = settings;
             _connection = connection;        
@@ -62,8 +63,8 @@ namespace MvcChatBot.Agent.Services
             _client.OnConnected += Client_OnConnected;
 
             _client.Connect();
-            
-            _twitchApiService = new TwitchApiService(_settings, _connection);
+
+            _twitchApiService = twitchApiService;
 
         }
         private void Client_OnLog(object sender, OnLogArgs e)
@@ -102,11 +103,6 @@ namespace MvcChatBot.Agent.Services
                     var url = $"https://twitch.tv/{username}";
                     _client.SendMessage(e.ChatMessage.Channel, $"Welcome to chat, {userDisplayName}! They are a member of the Livecoders 🎉! Check them out on {url}");
                 }
-            }
-
-            if(e.ChatMessage.MFFessage.StartsWith("!stats"))
-            {
-                _client.SendMessage(e.ChatMessage.Channel, _twitchApiService.GetCurrentStats());
             }
         }
         private async Task<List<User>> GetTeamMembers(string teamName)
@@ -166,10 +162,11 @@ namespace MvcChatBot.Agent.Services
                 case "laylatest":
                     await Test(e.Command);
                     break;
+                case "stats":
+                    await GetStats(e.Command);
+                    break;
                 default:
                     break;
-
-
             }
 
         }
@@ -287,6 +284,12 @@ namespace MvcChatBot.Agent.Services
         private string[] CardMessageHandler(string message)
         {
             return message.TrimStart('"').TrimEnd('"').Split("\" \"");
+        }
+
+        private async Task GetStats(ChatCommand e)
+        {
+            var currentStats = await _twitchApiService.GetStatsAsync();
+            _client.SendMessage(e.ChatMessage.Channel, currentStats);
         }
     }
 }
