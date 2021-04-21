@@ -19,7 +19,7 @@ function playSound(message) {
     switch (message) {
         case 'balls':
            // clip = 'layla_balls.mp3';
-            clip = "swag.mp3"
+			clip = "getyourballsin.mp3"
             break;
         case 'cannon':
             clip = 'party.mp3';

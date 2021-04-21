@@ -5,14 +5,14 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
 connection.on("LaylaMessage", function (user, message, action) {
    
-    if (action === "cannon") {
-        triggerCannon();
-    }
-    else {
+    //if (action === "cannon") {
+    //    triggerCannon();
+    //}
+    //else {
         let count = action === "super" ? 50 : 13;
         let image = action === "waffle" ? "waffle.png" : "destructopup-112.png";
         triggerRain(count, image);
-    }
+    //}
    
     
 });

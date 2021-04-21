@@ -153,16 +153,10 @@ namespace MvcChatBot.Agent.Services
                 case "waffle":
                     await Waffling(e.Command);
                     break;
-                //case "balls":
-                //    await PlayBalls(e.Command);
-                //    break;
-                case "swag":
-                    await PlayBalls(e.Command);
-                    break;
-                case "laylatest":
-                    await Test(e.Command);
-                    break;
-                default:
+				case "balls":
+					await PlayBalls(e.Command);
+					break;
+				default:
                     break;
 
 
@@ -184,8 +178,8 @@ namespace MvcChatBot.Agent.Services
             Console.WriteLine(_connection.ConnectionId);
             if (e.ChatMessage.IsModerator || e.ChatMessage.IsBroadcaster)
             {
-                // _client.SendMessage(e.ChatMessage.Channel, "Time to get your balls in! Type !prizedraw in the chat to be in with a chance to win!");
-                _client.SendMessage(e.ChatMessage.Channel, "Type !winbooty to be in for a chance of winning some booty!");
+                 _client.SendMessage(e.ChatMessage.Channel, "Time to get your balls in! Type !enter in the chat to be in with a chance to win!");
+                //_client.SendMessage(e.ChatMessage.Channel, "Type !winbooty to be in for a chance of winning some booty!");
                 await _connection.InvokeAsync("PlaySoundMessage", e.ChatMessage.DisplayName, "balls");
             }
         }
@@ -216,7 +210,7 @@ namespace MvcChatBot.Agent.Services
             try
             {
                 await _connection.InvokeAsync("SendMessage", e.GiftedSubscription.DisplayName, "Waffling", MessageTypeEnum.Cannon);
-               await _connection.InvokeAsync("PlaySoundMessage", e.GiftedSubscription.DisplayName, "cannon");
+              
                 _client.SendMessage(e.Channel,
                        $"Woweee! {e.GiftedSubscription.DisplayName} just gifted {e.GiftedSubscription.MsgParamRecipientDisplayName} a subscription! Thank you so much <3");
             }
@@ -226,10 +220,7 @@ namespace MvcChatBot.Agent.Services
             }
         }
 
-        private async Task Test(ChatCommand e)
-        {
-            await _connection.InvokeAsync("SendMessage", "TEST", "TEST", MessageTypeEnum.Cannon);
-        }
+
         private void CreateTrelloCard(ChatCommand e, string listName)
         {
             try
