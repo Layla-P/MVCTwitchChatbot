@@ -15,8 +15,7 @@
       <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="3.1.5" />
       <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.1.5" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.5" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.5" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.5" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.5" />      
       <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.5" />
       <PackageReference Include="RestSharp" Version="104.4.0" />
       <PackageReference Include="trellonet" Version="0.6.2" />

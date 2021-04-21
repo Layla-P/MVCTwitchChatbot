@@ -24,6 +24,7 @@ namespace MvcChatBot.Agent.Services
     {
         private readonly TwitchClient _client;
         private readonly TwitchSettings _settings;
+        private readonly TwitchApiService _twitchApiService;
         private readonly HubConnection _connection;
         private readonly TrelloService _trelloService;
         private List<User> liveCodersTeamMembers;
@@ -33,14 +34,13 @@ namespace MvcChatBot.Agent.Services
         public TwitchClientService(
             TwitchSettings settings,
             HubConnection connection,
-            TrelloService trelloService)
+            TrelloService trelloService,
+            TwitchApiService twitchApiService)
         {
             _settings = settings;
-            _connection = connection;
+            _connection = connection;        
             _trelloService = trelloService;
             _connection.StartAsync();
-
-
 
             ConnectionCredentials credentials = new ConnectionCredentials(_settings.BotName, _settings.AuthToken);
             var clientOptions = new ClientOptions
@@ -63,6 +63,8 @@ namespace MvcChatBot.Agent.Services
             _client.OnConnected += Client_OnConnected;
 
             _client.Connect();
+
+            _twitchApiService = twitchApiService;
 
         }
         private void Client_OnLog(object sender, OnLogArgs e)
@@ -102,8 +104,6 @@ namespace MvcChatBot.Agent.Services
                     _client.SendMessage(e.ChatMessage.Channel, $"Welcome to chat, {userDisplayName}! They are a member of the Livecoders 🎉! Check them out on {url}");
                 }
             }
-
-
         }
         private async Task<List<User>> GetTeamMembers(string teamName)
         {
@@ -153,13 +153,20 @@ namespace MvcChatBot.Agent.Services
                 case "waffle":
                     await Waffling(e.Command);
                     break;
-				case "balls":
-					await PlayBalls(e.Command);
-					break;
-				default:
+                //case "balls":
+                //    await PlayBalls(e.Command);
+                //    break;
+                case "swag":
+                    await PlayBalls(e.Command);
                     break;
-
-
+                case "laylatest":
+                    await Test(e.Command);
+                    break;
+                case "stats":
+                    await GetStats(e.Command);
+                    break;
+                default:
+                    break;
             }
 
         }
@@ -178,8 +185,8 @@ namespace MvcChatBot.Agent.Services
             Console.WriteLine(_connection.ConnectionId);
             if (e.ChatMessage.IsModerator || e.ChatMessage.IsBroadcaster)
             {
-                 _client.SendMessage(e.ChatMessage.Channel, "Time to get your balls in! Type !enter in the chat to be in with a chance to win!");
-                //_client.SendMessage(e.ChatMessage.Channel, "Type !winbooty to be in for a chance of winning some booty!");
+                // _client.SendMessage(e.ChatMessage.Channel, "Time to get your balls in! Type !prizedraw in the chat to be in with a chance to win!");
+                _client.SendMessage(e.ChatMessage.Channel, "Type !winbooty to be in for a chance of winning some booty!");
                 await _connection.InvokeAsync("PlaySoundMessage", e.ChatMessage.DisplayName, "balls");
             }
         }
@@ -210,7 +217,7 @@ namespace MvcChatBot.Agent.Services
             try
             {
                 await _connection.InvokeAsync("SendMessage", e.GiftedSubscription.DisplayName, "Waffling", MessageTypeEnum.Cannon);
-              
+               await _connection.InvokeAsync("PlaySoundMessage", e.GiftedSubscription.DisplayName, "cannon");
                 _client.SendMessage(e.Channel,
                        $"Woweee! {e.GiftedSubscription.DisplayName} just gifted {e.GiftedSubscription.MsgParamRecipientDisplayName} a subscription! Thank you so much <3");
             }
@@ -220,7 +227,10 @@ namespace MvcChatBot.Agent.Services
             }
         }
 
-
+        private async Task Test(ChatCommand e)
+        {
+            await _connection.InvokeAsync("SendMessage", "TEST", "TEST", MessageTypeEnum.Cannon);
+        }
         private void CreateTrelloCard(ChatCommand e, string listName)
         {
             try
@@ -274,6 +284,12 @@ namespace MvcChatBot.Agent.Services
         private string[] CardMessageHandler(string message)
         {
             return message.TrimStart('"').TrimEnd('"').Split("\" \"");
+        }
+
+        private async Task GetStats(ChatCommand e)
+        {
+            var currentStats = await _twitchApiService.GetStatsAsync();
+            _client.SendMessage(e.ChatMessage.Channel, currentStats);
         }
     }
 }
