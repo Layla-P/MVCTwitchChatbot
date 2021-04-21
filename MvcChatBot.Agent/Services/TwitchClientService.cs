@@ -24,6 +24,7 @@ namespace MvcChatBot.Agent.Services
     {
         private readonly TwitchClient _client;
         private readonly TwitchSettings _settings;
+        private readonly TwitchApiService _twitchApiService;
         private readonly HubConnection _connection;
         private readonly TrelloService _trelloService;
         private List<User> liveCodersTeamMembers;
@@ -33,14 +34,13 @@ namespace MvcChatBot.Agent.Services
         public TwitchClientService(
             TwitchSettings settings,
             HubConnection connection,
-            TrelloService trelloService)
+            TrelloService trelloService,
+            TwitchApiService twitchApiService)
         {
             _settings = settings;
-            _connection = connection;
+            _connection = connection;        
             _trelloService = trelloService;
             _connection.StartAsync();
-
-
 
             ConnectionCredentials credentials = new ConnectionCredentials(_settings.BotName, _settings.AuthToken);
             var clientOptions = new ClientOptions
@@ -63,6 +63,8 @@ namespace MvcChatBot.Agent.Services
             _client.OnConnected += Client_OnConnected;
 
             _client.Connect();
+
+            _twitchApiService = twitchApiService;
 
         }
         private void Client_OnLog(object sender, OnLogArgs e)
@@ -102,8 +104,6 @@ namespace MvcChatBot.Agent.Services
                     _client.SendMessage(e.ChatMessage.Channel, $"Welcome to chat, {userDisplayName}! They are a member of the Livecoders 🎉! Check them out on {url}");
                 }
             }
-
-
         }
         private async Task<List<User>> GetTeamMembers(string teamName)
         {
@@ -162,10 +162,11 @@ namespace MvcChatBot.Agent.Services
                 case "laylatest":
                     await Test(e.Command);
                     break;
+                case "stats":
+                    await GetStats(e.Command);
+                    break;
                 default:
                     break;
-
-
             }
 
         }
@@ -283,6 +284,12 @@ namespace MvcChatBot.Agent.Services
         private string[] CardMessageHandler(string message)
         {
             return message.TrimStart('"').TrimEnd('"').Split("\" \"");
+        }
+
+        private async Task GetStats(ChatCommand e)
+        {
+            var currentStats = await _twitchApiService.GetStatsAsync();
+            _client.SendMessage(e.ChatMessage.Channel, currentStats);
         }
     }
 }

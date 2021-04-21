@@ -17,14 +17,25 @@ namespace MvcChatBot.Agent.Services
         private TwitchAPI API;
         //private FollowerService FollowerService;
         private readonly TwitchSettings _settings;
-        private readonly HubConnection _connection;
+        private readonly HubConnection _connection;  
 
         public TwitchApiService(TwitchSettings settings, HubConnection connection)
         {
-            _settings = settings;
+            _settings = settings;           
+
+            API = new TwitchAPI();
+            API.Settings.ClientId = _settings.ClientId;
+            API.Settings.AccessToken = _settings.ChannelAuthToken;
+
             _connection = connection;
             _connection.StartAsync();
-            Task.Run(() => ConfigLiveMonitorAsync());
+            //Task.Run(() => ConfigLiveMonitorAsync());
+        }
+
+        public async Task<string> GetStatsAsync()
+        {
+            var currentStream = await API.V5.Streams.GetStreamByUserAsync(_settings.ChannelId);
+            return $"Current stats for {currentStream.Stream.Channel.DisplayName}: {currentStream.Stream.Viewers} viewers, {currentStream.Stream.Channel.Views} views and {currentStream.Stream.Channel.Followers}.";
         }
 
         private async Task ConfigLiveMonitorAsync()
