@@ -67,7 +67,8 @@ namespace MvcChatBot.Agent
            
             services.AddSingleton(twitchSettings);
             services.AddSingleton(connection);
-            services.AddSingleton<TwitchClientService>();
+			services.AddSingleton<TwitchApiService>();
+			services.AddSingleton<TwitchClientService>();
 
             services.AddSingleton<TwitchPubSubService>();
 
