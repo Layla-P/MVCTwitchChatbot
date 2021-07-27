@@ -203,21 +203,22 @@ namespace MvcChatBot.Agent.Services
             if (e.WhisperMessage.Username == "my_friend")
                 _client.SendWhisper(e.WhisperMessage.Username, "Hey! Whispers are so cool!!");
         }
-        private void Client_OnNewSubscriber(object sender, OnNewSubscriberArgs e)
+        private async void Client_OnNewSubscriber(object sender, OnNewSubscriberArgs e)
         {
             if (e.Subscriber.SubscriptionPlan == SubscriptionPlan.Prime)
                 _client.SendMessage(e.Channel,
                     $"Welcome {e.Subscriber.DisplayName} to the wafflers! Thank you for using your Twitch Prime on this channel!");
             else
                 _client.SendMessage(e.Channel,
-                    $"Welcome {e.Subscriber.DisplayName} to the wafflers!");
-        }
+                    $"Welcome {e.Subscriber.DisplayName} to the wafflers!");			
+			await _connection.InvokeAsync("SendMessage", e.Subscriber.DisplayName, "Presents", MessageTypeEnum.Sub);
+		}
         private async void Client_OnGiftSubscriber(object sender, OnGiftedSubscriptionArgs e)
         {
             try
             {
-                await _connection.InvokeAsync("SendMessage", e.GiftedSubscription.DisplayName, "Waffling", MessageTypeEnum.Cannon);
-               await _connection.InvokeAsync("PlaySoundMessage", e.GiftedSubscription.DisplayName, "cannon");
+                await _connection.InvokeAsync("SendMessage", e.GiftedSubscription.DisplayName, "Presents", MessageTypeEnum.GiftSub);
+               //await _connection.InvokeAsync("PlaySoundMessage", e.GiftedSubscription.DisplayName, "cannon");			   
                 _client.SendMessage(e.Channel,
                        $"Woweee! {e.GiftedSubscription.DisplayName} just gifted {e.GiftedSubscription.MsgParamRecipientDisplayName} a subscription! Thank you so much <3");
             }

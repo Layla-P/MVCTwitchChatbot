@@ -11,6 +11,8 @@ namespace MvcChatBot.Models
         Rain = 10,
         SuperRain = 20,
         Waffle = 30,
-        Cannon = 40
-    }
+        Cannon = 40,
+		Sub = 50,
+		GiftSub = 60
+	}
 }

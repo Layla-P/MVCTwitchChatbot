@@ -4,67 +4,67 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
 
 connection.on("LaylaMessage", function (user, message, action) {
-   
-    //if (action === "cannon") {
-    //    triggerCannon();
-    //}
-    //else {
-        let count = action === "super" ? 50 : 13;
-        let image = action === "waffle" ? "waffle.png" : "destructopup-112.png";
-        triggerRain(count, image);
-    //}
-   
-    
+
+	//if (action === "cannon") {
+	//    triggerCannon();
+	//}
+	//else {
+	let count = action === "super" ? 50 : ("sub" ? 1 : 13);
+	let image = action === "waffle" ? "waffle.png" : ("sub" ? "sub.png" : "destructopup-112.png");
+	triggerRain(count, image);
+	//}
+
+
 });
 
 connection.start().then(function () {
-   
+
 }).catch(function (err) {
-    return console.error(err.toString());
+	return console.error(err.toString());
 });
 
 const world = document.querySelector(".boops");
 const { Engine, Render, Runner, World, Bodies } = Matter;
 
 function createBall(image) {
-    const ball = Bodies.circle(Math.round(Math.random() * 1280), -30, 25, {
-        angle: Math.PI * (Math.random() * 2 - 1),
-        friction: 0.001,
-        frictionAir: 0.01,
-        restitution: 0.8,
-        render: {
-            sprite: {
-                texture: image                
-            }
-        }
-    });
+	const ball = Bodies.circle(Math.round(Math.random() * 1280), -30, 25, {
+		angle: Math.PI * (Math.random() * 2 - 1),
+		friction: 0.001,
+		frictionAir: 0.01,
+		restitution: 0.8,
+		render: {
+			sprite: {
+				texture: image
+			}
+		}
+	});
 
-    setTimeout(() => {
-        World.remove(engine.world, ball);
-    }, 30000);
+	setTimeout(() => {
+		World.remove(engine.world, ball);
+	}, 30000);
 
-    return ball;
+	return ball;
 }
 
 const engine = Engine.create();
 const runner = Runner.create();
 const render = Render.create({
-    canvas: world,
-    engine: engine,
-    options: {
-        width: 1280,
-        height: 720,
-        background: "transparent",
-        wireframes: false
-    }
+	canvas: world,
+	engine: engine,
+	options: {
+		width: 1280,
+		height: 720,
+		background: "transparent",
+		wireframes: false
+	}
 });
 
 const boundaryOptions = {
-    isStatic: true,
-    render: {
-        fillStyle: "transparent",
-        strokeStyle: "transparent"
-    }
+	isStatic: true,
+	render: {
+		fillStyle: "transparent",
+		strokeStyle: "transparent"
+	}
 };
 const ground = Bodies.rectangle(640, 720, 1300, 4, boundaryOptions);
 const leftWall = Bodies.rectangle(0, 360, 4, 740, boundaryOptions);
@@ -77,9 +77,9 @@ World.add(engine.world, [ground, leftWall, rightWall]);
 
 const triggerRain = (count, image) => {
 
-    for (let i = 0; i < count; i++) {
-        World.add(engine.world, [createBall(image)])
-    }
+	for (let i = 0; i < count; i++) {
+		World.add(engine.world, [createBall(image)])
+	}
 };
 
 
@@ -105,131 +105,131 @@ const colorArr = ['#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6', '#E6B33
 let readyToFire = true;
 function CreateConfetti(amount) {
 
-    for (let i = 0; i < amount; i++) {
+	for (let i = 0; i < amount; i++) {
 
-        // Giving the confetti a random height and width
-        const h = Rand(minHeight, maxHeight);
-        const w = Rand(minWidth, maxWidth);
+		// Giving the confetti a random height and width
+		const h = Rand(minHeight, maxHeight);
+		const w = Rand(minWidth, maxWidth);
 
-        // Generating the confetti background color
-        const color = colorArr[Rand(0, colorArr.length)];
+		// Generating the confetti background color
+		const color = colorArr[Rand(0, colorArr.length)];
 
-        // Creating the confetti as the specified element type
-        const c = $(elementType);
+		// Creating the confetti as the specified element type
+		const c = $(elementType);
 
-        // Setting height and width
-        c.height(h);
-        c.width(w);
+		// Setting height and width
+		c.height(h);
+		c.width(w);
 
-        // Adding class with global styling
-        c.addClass("confetti");
+		// Adding class with global styling
+		c.addClass("confetti");
 
-        // Setting the position and background color of the confetti
-        c.css({
-            "background-color": color,
-            "left": startPosLeft,
-            "top": startPosTop
-        });
+		// Setting the position and background color of the confetti
+		c.css({
+			"background-color": color,
+			"left": startPosLeft,
+			"top": startPosTop
+		});
 
-        // Inserts the confetti into the container
-        box.append(c);
-    }
+		// Inserts the confetti into the container
+		box.append(c);
+	}
 
 }
 
 function Fire() {
 
-    // Check to see if cannon is ready to fire
-    if (readyToFire) {
+	// Check to see if cannon is ready to fire
+	if (readyToFire) {
 
-        readyToFire = false;
+		readyToFire = false;
 
-        // Loops through all confetti inside the container
-        box.children(className).each(function () {
+		// Loops through all confetti inside the container
+		box.children(className).each(function () {
 
-            const c = $(this);
+			const c = $(this);
 
-            // Duration of the transitions
-            const dur = RandFloat(minAnimDuration, maxAnimDuration);
+			// Duration of the transitions
+			const dur = RandFloat(minAnimDuration, maxAnimDuration);
 
-            // X and Y rotation in degrees
-            const xRotation = Rand(1440, 3600);
-            const zRotation = Rand(540, 1440);
+			// X and Y rotation in degrees
+			const xRotation = Rand(1440, 3600);
+			const zRotation = Rand(540, 1440);
 
-            // Controls the vertical spread of the confetti, the bigger the difference between the two numbers, the larger the spread
-            const verticalSpread = RandFloat(4, 8);
+			// Controls the vertical spread of the confetti, the bigger the difference between the two numbers, the larger the spread
+			const verticalSpread = RandFloat(4, 8);
 
-            // Controls how clumped the confetti falls
-            // Second value cannot be above 1
-            // This is used to prevent them all hitting the ground at the same time
-            // The bigger the difference between the two numbers, the larger the spread
-            const fallingClump = RandFloat(-5, 1);
+			// Controls how clumped the confetti falls
+			// Second value cannot be above 1
+			// This is used to prevent them all hitting the ground at the same time
+			// The bigger the difference between the two numbers, the larger the spread
+			const fallingClump = RandFloat(-5, 1);
 
-            // Delay before transition (animation) starts
-            // This is used to prevent all the confetti being fired in a clump
-            const delay = RandFloat(0, 1);
+			// Delay before transition (animation) starts
+			// This is used to prevent all the confetti being fired in a clump
+			const delay = RandFloat(0, 1);
 
-            // Setting up the three different transition properties for the element
-            const cTransitionTop = "top " + dur + "s cubic-bezier(0, -" + verticalSpread + ", 0.1, " + fallingClump + ") " + delay + "s";
-            const cTransitionLeft = "left " + dur + "s cubic-bezier(0, 1, 0.1, 1) " + delay + "s";
-            const cTransitionTransform = "transform " + dur + "s linear " + delay + "s";
+			// Setting up the three different transition properties for the element
+			const cTransitionTop = "top " + dur + "s cubic-bezier(0, -" + verticalSpread + ", 0.1, " + fallingClump + ") " + delay + "s";
+			const cTransitionLeft = "left " + dur + "s cubic-bezier(0, 1, 0.1, 1) " + delay + "s";
+			const cTransitionTransform = "transform " + dur + "s linear " + delay + "s";
 
-            // Stitching the transitions together
-            const cTransition = cTransitionTop + ", " + cTransitionLeft + ", " + cTransitionTransform;
+			// Stitching the transitions together
+			const cTransition = cTransitionTop + ", " + cTransitionLeft + ", " + cTransitionTransform;
 
-            // Left property for the element
-            const cLeft = Rand(minFireLeft, maxFireLeft);
+			// Left property for the element
+			const cLeft = Rand(minFireLeft, maxFireLeft);
 
-            // Top property for the element
-            const cTop = floor + "%";
+			// Top property for the element
+			const cTop = floor + "%";
 
-            // Transform (i.e. the rotational movement) for the element
-            const cTransform = "rotateX(" + xRotation + "deg) rotateZ(" + zRotation + "deg)";
+			// Transform (i.e. the rotational movement) for the element
+			const cTransform = "rotateX(" + xRotation + "deg) rotateZ(" + zRotation + "deg)";
 
-            // Adding the CSS properties to the confetti
-            c.css({
-                "transition": cTransition,
-                "left": cLeft,
-                "top": cTop,
-                "transform": cTransform
-            });
+			// Adding the CSS properties to the confetti
+			c.css({
+				"transition": cTransition,
+				"left": cLeft,
+				"top": cTop,
+				"transform": cTransform
+			});
 
-        });
+		});
 
-    }
+	}
 
 }
 
 // Resets the position of each confetti
 function ResetConfetti() {
-    box.children(className).each(function () {
+	box.children(className).each(function () {
 
-        const c = $(this);
+		const c = $(this);
 
-        c.css({
-            "transition": "",
-            "top": startPosTop,
-            "left": startPosLeft,
-            "transform": ""
-        });
+		c.css({
+			"transition": "",
+			"top": startPosTop,
+			"left": startPosLeft,
+			"transform": ""
+		});
 
-    });
+	});
 
-    readyToFire = true;
+	readyToFire = true;
 }
 
 // Returns random whole number
 function Rand(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
+	return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 // Returns random float with two decimals
 function RandFloat(min, max) {
-    let a = Math.random() * (max - min) + min;
+	let a = Math.random() * (max - min) + min;
 
-    a = a.toFixed(2);
+	a = a.toFixed(2);
 
-    return a;
+	return a;
 }
 
 CreateConfetti(confettiAmount);
@@ -237,10 +237,10 @@ CreateConfetti(confettiAmount);
 
 const triggerCannon = () => {
 
-    Fire();
-    setTimeout(() => {
-        ResetConfetti();
-    }, 30000);
+	Fire();
+	setTimeout(() => {
+		ResetConfetti();
+	}, 30000);
 };
 
 

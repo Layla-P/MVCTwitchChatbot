@@ -20,7 +20,10 @@ namespace MvcChatBot.Hubs
                 case MessageTypeEnum.SuperRain:
                     action = "super";
                     break;
-                case MessageTypeEnum.Rain:
+				case MessageTypeEnum.Sub:
+					action = "sub";
+					break;
+				case MessageTypeEnum.Rain:
                 default:
                     action = "rain";                
                     break;

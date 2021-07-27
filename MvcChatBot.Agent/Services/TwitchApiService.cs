@@ -35,7 +35,7 @@ namespace MvcChatBot.Agent.Services
         public async Task<string> GetStatsAsync()
         {
             var currentStream = await API.V5.Streams.GetStreamByUserAsync(_settings.ChannelId);
-            return $"Current stats for {currentStream.Stream.Channel.DisplayName}: {currentStream.Stream.Viewers} viewers, {currentStream.Stream.Channel.Views} views and {currentStream.Stream.Channel.Followers}.";
+            return $"Current stats for {currentStream.Stream.Channel.DisplayName}: {currentStream.Stream.Viewers} viewers, {currentStream.Stream.Channel.Views} views and {currentStream.Stream.Channel.Followers} followers.";
         }
 
         private async Task ConfigLiveMonitorAsync()
