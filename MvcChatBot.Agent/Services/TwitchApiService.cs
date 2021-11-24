@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Net.Http;
 using System.Threading.Tasks;
 using TwitchLib.Api;
+using TwitchLib.Api.Core.Models.Undocumented.ChatUser;
+using TwitchLib.Api.Helix.Models.Users;
+using TwitchLib.Api.Helix.Models.Users.GetUsers;
 using TwitchLib.Api.Services;
 using TwitchLib.Api.Services.Events;
-using TwitchLib.Api.Services.Events.FollowerService;
 using TwitchLib.Api.Services.Events.LiveStreamMonitor;
 
 namespace MvcChatBot.Agent.Services
@@ -70,29 +72,38 @@ namespace MvcChatBot.Agent.Services
             await Task.Delay(-1);
         }
 
-        //private void Follower_OnNewFollow(object sender, OnNewFollowersDetectedArgs e)
-        //{
-           
-                     
-        //    e.NewFollowers.ForEach(async(follower) => {
-        //        Console.WriteLine($"New follower: {follower.FromUserName}");
-        //        await _connection.InvokeAsync("PlaySoundMessage", follower.FromUserName, "follow");
-        //    });
-        //}
+		public async Task<User> GetUserAsync(string userId)
+		{
 
-        //private void Follower_OnServiceStarted(object sender, OnServiceStartedArgs e)
-        //{
-        //    Console.WriteLine("OnFollowerService Started");
-        //}
+			var userResponse = await API.Helix.Users.GetUsersAsync(new List<string> { userId });
+
+			return userResponse.Users[0];
+
+		}
+
+//private void Follower_OnNewFollow(object sender, OnNewFollowersDetectedArgs e)
+//{
 
 
-        //private void Follower_OnChannelsSet(object sender, OnChannelsSetArgs e)
-        //{
-        //    Console.WriteLine("Follower OnChannelSet from Api");
-        //}
+//    e.NewFollowers.ForEach(async(follower) => {
+//        Console.WriteLine($"New follower: {follower.FromUserName}");
+//        await _connection.InvokeAsync("PlaySoundMessage", follower.FromUserName, "follow");
+//    });
+//}
+
+//private void Follower_OnServiceStarted(object sender, OnServiceStartedArgs e)
+//{
+//    Console.WriteLine("OnFollowerService Started");
+//}
 
 
-        private void Monitor_OnStreamOnline(object sender, OnStreamOnlineArgs e)
+//private void Follower_OnChannelsSet(object sender, OnChannelsSetArgs e)
+//{
+//    Console.WriteLine("Follower OnChannelSet from Api");
+//}
+
+
+private void Monitor_OnStreamOnline(object sender, OnStreamOnlineArgs e)
         {
             Console.WriteLine("Stream online from Api");
         }

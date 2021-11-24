@@ -34,12 +34,12 @@ namespace MvcChatBot.Agent.Services
         public TwitchClientService(
             TwitchSettings settings,
             HubConnection connection,
-            TrelloService trelloService,
+            //TrelloService trelloService,
             TwitchApiService twitchApiService)
         {
             _settings = settings;
             _connection = connection;        
-            _trelloService = trelloService;
+            //_trelloService = trelloService;
             _connection.StartAsync();
 
             ConnectionCredentials credentials = new ConnectionCredentials(_settings.BotName, _settings.AuthToken);
@@ -57,7 +57,9 @@ namespace MvcChatBot.Agent.Services
             _client.OnWhisperReceived += Client_OnWhisperReceived;
             _client.OnRaidNotification += Client_OnRaidNotification;
             _client.OnNewSubscriber += Client_OnNewSubscriber;
-            _client.OnGiftedSubscription += Client_OnGiftSubscriber;
+			_client.OnCommunitySubscription += Client_OnPrimePaidSubscriber;
+			_client.OnReSubscriber += Client_OnReSubscriber;
+			_client.OnGiftedSubscription += Client_OnGiftSubscriber;
             _client.OnMessageReceived += Client_MessageReceived;
 
             _client.OnConnected += Client_OnConnected;
@@ -153,9 +155,6 @@ namespace MvcChatBot.Agent.Services
                 case "waffle":
                     await Waffling(e.Command);
                     break;
-                //case "balls":
-                //    await PlayBalls(e.Command);
-                //    break;
                 case "swag":
                     await PlayBalls(e.Command);
                     break;
@@ -165,7 +164,10 @@ namespace MvcChatBot.Agent.Services
                 case "stats":
                     await GetStats(e.Command);
                     break;
-                default:
+				case "drop":
+					await Ping(e.Command);
+					break;
+				default:
                     break;
             }
 
@@ -212,16 +214,47 @@ namespace MvcChatBot.Agent.Services
                 _client.SendMessage(e.Channel,
                     $"Welcome {e.Subscriber.DisplayName} to the wafflers!");			
 			await _connection.InvokeAsync("SendMessage", e.Subscriber.DisplayName, "Presents", MessageTypeEnum.Sub);
+
+			var user = await _twitchApiService.GetUserAsync(e.Subscriber.UserId);
+			var image = ResizeProfileImage(user.ProfileImageUrl);
+			await _connection.InvokeAsync("PingImage", image);
 		}
-        private async void Client_OnGiftSubscriber(object sender, OnGiftedSubscriptionArgs e)
+		private async void Client_OnReSubscriber(object sender, OnReSubscriberArgs e)
+		{
+				_client.SendMessage(e.Channel,
+					$"Thank you {e.ReSubscriber.DisplayName} for resubbing the channel! You have been a subscriber for {e.ReSubscriber.Months} months!");
+			await _connection.InvokeAsync("SendMessage", e.ReSubscriber.DisplayName, "Presents", MessageTypeEnum.Sub);
+			var user = await _twitchApiService.GetUserAsync(e.ReSubscriber.UserId);
+			var image = ResizeProfileImage(user.ProfileImageUrl);
+			await _connection.InvokeAsync("PingImage", image);
+		}
+		private async void Client_OnPrimePaidSubscriber(object sender, OnCommunitySubscriptionArgs e)
+		{			
+				_client.SendMessage(e.Channel,
+					$"Welcome {e.GiftedSubscription.DisplayName} to the wafflers! Thank you for using your Twitch Prime on this channel!");
+			await _connection.InvokeAsync("SendMessage", e.GiftedSubscription.DisplayName, "Presents", MessageTypeEnum.Sub);
+
+			var user = await _twitchApiService.GetUserAsync(e.GiftedSubscription.UserId);
+			var image = ResizeProfileImage(user.ProfileImageUrl);
+			await _connection.InvokeAsync("PingImage", image);
+
+		}
+		private async void Client_OnGiftSubscriber(object sender, OnGiftedSubscriptionArgs e)
         {
             try
             {
                 await _connection.InvokeAsync("SendMessage", e.GiftedSubscription.DisplayName, "Presents", MessageTypeEnum.GiftSub);
+
+				
                //await _connection.InvokeAsync("PlaySoundMessage", e.GiftedSubscription.DisplayName, "cannon");			   
                 _client.SendMessage(e.Channel,
                        $"Woweee! {e.GiftedSubscription.DisplayName} just gifted {e.GiftedSubscription.MsgParamRecipientDisplayName} a subscription! Thank you so much <3");
-            }
+
+				var user = await _twitchApiService.GetUserAsync(e.GiftedSubscription.UserId);
+				var image = ResizeProfileImage(user.ProfileImageUrl);
+				await _connection.InvokeAsync("PingImage", image);
+
+			}
             catch (Exception ex)
             {
                 Console.WriteLine($"Gifted sub action failed: {ex.Message}");
@@ -292,5 +325,29 @@ namespace MvcChatBot.Agent.Services
             var currentStats = await _twitchApiService.GetStatsAsync();
             _client.SendMessage(e.ChatMessage.Channel, currentStats);
         }
-    }
+
+		
+		private async Task Ping(ChatCommand e)
+		{
+			if (e.ChatMessage.EmoteSet.Emotes.Any())
+			{
+				foreach (var emote in e.ChatMessage.EmoteSet.Emotes)
+				{
+					await _connection.InvokeAsync("PingImage", emote.ImageUrl);
+				}
+			}
+			else
+			{
+				var user = await _twitchApiService.GetUserAsync(e.ChatMessage.UserId);
+				var image = ResizeProfileImage(user.ProfileImageUrl);
+				await _connection.InvokeAsync("PingImage", image);
+			}
+			
+		}
+
+		private string ResizeProfileImage(string imageUrl)
+		{
+			return imageUrl.Replace("300x300", "50x50"); ;
+		}
+	}
 }

@@ -30,15 +30,33 @@ namespace MvcChatBot.Agent.Services
             _client.OnListenResponse += onListenResponse;
             _client.OnStreamUp += onStreamUp;
             _client.OnStreamDown += onStreamDown;
-            _client.OnRewardRedeemed += onRewardRedeemed;
+            //_client.OnRewardRedeemed += onRewardRedeemed;
+            //_client.OnChannelPointsRewardRedeemed -= onRewardRedeemed;
             _client.OnFollow += onFollow;
 
             _client.ListenToFollows(_settings.ChannelId);
-            _client.ListenToRewards(_settings.ChannelId);
+            ListenToRewards(_settings.ChannelId);
+            //_client.ListenToChannelPoints(_settings.ChannelId);
+            //_client.ListenToRewards(_settings.ChannelId);
 
             _client.Connect();
         }
+        private void ListenToRewards(string channelId)
+        {
+            _client.ListenToChannelPoints(channelId);
+            _client.OnChannelPointsRewardRedeemed += PubSub_OnChannelPointsRewardRedeemed;
+        }
 
+        private void PubSub_OnChannelPointsRewardRedeemed(object sender, OnChannelPointsRewardRedeemedArgs e)
+        {
+            var redemption = e.RewardRedeemed.Redemption;
+            var reward = e.RewardRedeemed.Redemption.Reward;
+            var redeemedUser = e.RewardRedeemed.Redemption.User;
+
+         
+        }
+
+       
 
         private void onPubSubServiceConnected(object sender, EventArgs e)
         {
@@ -46,18 +64,20 @@ namespace MvcChatBot.Agent.Services
             _client.SendTopics($"oauth:{_settings.ChannelAuthToken}");
         }
         //https://docs.microsoft.com/en-us/archive/msdn-magazine/2013/march/async-await-best-practices-in-asynchronous-programming#:~:text=Avoid%20Async%20Void
-        private async void onRewardRedeemed(object sender, OnRewardRedeemedArgs e)
+        //private async void onRewardRedeemed(object sender, OnRewardRedeemedArgs e)
+        private async void onRewardRedeemed(object sender, OnChannelPointsRewardRedeemedArgs e)
         {
-           if(e.RewardTitle == "puppy-rain")
+           if(e.RewardRedeemed.ToString() == "puppy-rain")
             {
 
-                await _connection.InvokeAsync("SendMessage", e.DisplayName, "It's a torrential downpour of destructopups!!!", MessageTypeEnum.SuperRain);
+                await _connection.InvokeAsync("SendMessage", e.RewardRedeemed.Redemption.User.DisplayName, "It's a torrential downpour of destructopups!!!", MessageTypeEnum.SuperRain);
             }
         }
 
         private async void onFollow(object sender, OnFollowArgs e)
         {
             Console.WriteLine($"follow from pubsub {e.DisplayName}");
+			
             await _connection.InvokeAsync("PlaySoundMessage", e.DisplayName, "follow");
         }
 

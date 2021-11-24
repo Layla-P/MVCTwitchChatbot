@@ -32,28 +32,28 @@ namespace MvcChatBot.Agent
 
             IServiceCollection services = new ServiceCollection();
 
-            var lists = new List<TrelloList>();
-            var test = Configuration.GetSection("TrelloSettings:TrelloLists")
-                .GetChildren().ToList();
+            //var lists = new List<TrelloList>();
+            //var test = Configuration.GetSection("TrelloSettings:TrelloLists")
+               // .GetChildren().ToList();
 
-            foreach (var l in test)
-            {
-                var list = new TrelloList();
-                l.Bind(list);
-                lists.Add(list);
-            }
+            //foreach (var l in test)
+            //{
+            //    var list = new TrelloList();
+            //    l.Bind(list);
+            //    lists.Add(list);
+            //}
 
-            TrelloSettings trelloSettings = new TrelloSettings
-            {
-                ApiKey = Configuration.GetValue<string>("TrelloSettings:ApiKey"),
-                Token = Configuration.GetValue<string>("TrelloSettings:Token"),
-                BoardId = Configuration.GetValue<string>("TrelloSettings:BoardId"),
-                TrelloLists = lists
-            };
+            //TrelloSettings trelloSettings = new TrelloSettings
+            //{
+            //    ApiKey = Configuration.GetValue<string>("TrelloSettings:ApiKey"),
+            //    Token = Configuration.GetValue<string>("TrelloSettings:Token"),
+            //    BoardId = Configuration.GetValue<string>("TrelloSettings:BoardId"),
+            //    TrelloLists = lists
+            //};
 
 
-            services.AddSingleton(trelloSettings);
-            services.AddSingleton<TrelloService>();
+            //services.AddSingleton(trelloSettings);
+            //services.AddSingleton<TrelloService>();
 
             TwitchSettings twitchSettings = new TwitchSettings
             {

@@ -1,11 +1,20 @@
 "use strict";
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
-
+let imageUrl;
 
 connection.on("Bops", function (count) {
 
-    handleClick(count);
+	imageUrl = "waffle.png";
+	handleClick(count);
+	
+});
+
+connection.on("PingImage", function (image) {
+
+	imageUrl = image;
+	handleClick(1);
+
 });
 
 connection.start().then(function () {
@@ -20,12 +29,12 @@ const { Engine, Render, Runner, World, Bodies } = Matter;
 function createBall() {
     const ball = Bodies.circle(Math.round(Math.random() * 1280), -30, 25, {
         angle: Math.PI * (Math.random() * 2 - 1),
-        friction: 0.001,
+        friction: 0.1,
         frictionAir: 0.01,
         restitution: 0.8,
         render: {
             sprite: {
-                texture: "waffle.png"
+				texture: imageUrl
             }
         }
     });
@@ -76,7 +85,7 @@ let idRAF = null;
 function update() {
     engine.world.gravity.x = Math.sin(num / 100);
     engine.world.gravity.y = Math.cos(num / 100);
-    num += 1.7;
+    num += 1.2;
     idRAF = requestAnimationFrame(update.bind(this));
 
 }

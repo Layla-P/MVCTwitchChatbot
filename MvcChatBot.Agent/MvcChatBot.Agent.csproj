@@ -1,32 +1,43 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <UserSecretsId>MvcChatBot</UserSecretsId>
     </PropertyGroup>
 
+	<!--<ItemGroup>
+		<Reference Include="TwitchLib.Unity">
+			<HintPath>C:\Users\Layla\source\repos\Unity\VirtualScene_Winter\Assets\DotNetLibraryPlugins\TwitchLib\TwitchLib.Unity.dll</HintPath>
+		</Reference>
+	</ItemGroup>-->
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
-        <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="3.1.5" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.5" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.5" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="3.1.5" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.1.5" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.5" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.5" />      
-      <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.5" />
-      <PackageReference Include="RestSharp" Version="104.4.0" />
-      <PackageReference Include="trellonet" Version="0.6.2" />
-      <PackageReference Include="TwitchLib.Client" Version="3.1.5" />
-      <PackageReference Include="TwitchLib.PubSub" Version="3.1.5-CI-20200712-3" />
-      <PackageReference Include="TwitchLib.Api" Version="3.1.3" />
+        <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="6.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="6.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.0" />      
+      <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
+      <PackageReference Include="RestSharp" Version="106.13.0" />
+      <PackageReference Include="TrelloNet" Version="0.6.2" />
+      <PackageReference Include="TwitchLib.Client" Version="3.2.4" />
+      <!--<PackageReference Include="TwitchLib.PubSub" Version="3.1.5-CI-20200712-3" />-->
+      <PackageReference Include="TwitchLib.Api" Version="3.3.0" />
     </ItemGroup>
 
 
     <ItemGroup>
       <ProjectReference Include="..\MvcChatBot\MvcChatBot.csproj" />
+    </ItemGroup>
+
+	<ItemGroup>
+      <Reference Include="TwitchLib.PubSub">
+        <HintPath>..\..\..\Unity\VirtualScene_Winter\Assets\DotNetLibraryPlugins\TwitchLib.Unity\TwitchLib.PubSub.dll</HintPath>
+      </Reference>
+     
     </ItemGroup>
 
 </Project>
