@@ -150,6 +150,9 @@ namespace MvcChatBot.Agent.Services
                 case "puprain":
                     await MakeItRain(e.Command);
                     break;
+                case "drop":
+                    await Ping(e.Command);
+                    break;
                 case "waffle":
                     await Waffling(e.Command);
                     break;
@@ -291,6 +294,29 @@ namespace MvcChatBot.Agent.Services
         {
             var currentStats = await _twitchApiService.GetStatsAsync();
             _client.SendMessage(e.ChatMessage.Channel, currentStats);
+        }
+
+        private async Task Ping(ChatCommand e)
+        {
+            if (e.ChatMessage.EmoteSet.Emotes.Any())
+            {
+                foreach (var emote in e.ChatMessage.EmoteSet.Emotes)
+                {
+                    await _connection.InvokeAsync("PingImage", emote.ImageUrl);
+                }
+            }
+            else
+            {
+                var user = await _twitchApiService.GetUserAsync(e.ChatMessage.UserId);
+                var image = ResizeProfileImage(user.ProfileImageUrl);
+                await _connection.InvokeAsync("PingImage", image);
+            }
+
+        }
+
+        private string ResizeProfileImage(string imageUrl)
+        {
+            return imageUrl.Replace("300x300", "50x50"); ;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using TwitchLib.Api;
+using TwitchLib.Api.Helix.Models.Users;
 using TwitchLib.Api.Services;
 using TwitchLib.Api.Services.Events;
 using TwitchLib.Api.Services.Events.FollowerService;
@@ -72,8 +73,8 @@ namespace MvcChatBot.Agent.Services
 
         //private void Follower_OnNewFollow(object sender, OnNewFollowersDetectedArgs e)
         //{
-           
-                     
+
+
         //    e.NewFollowers.ForEach(async(follower) => {
         //        Console.WriteLine($"New follower: {follower.FromUserName}");
         //        await _connection.InvokeAsync("PlaySoundMessage", follower.FromUserName, "follow");
@@ -91,7 +92,14 @@ namespace MvcChatBot.Agent.Services
         //    Console.WriteLine("Follower OnChannelSet from Api");
         //}
 
+        public async Task<User> GetUserAsync(string userId)
+        {
 
+            var userResponse = await API.Helix.Users.GetUsersAsync(new List<string> { userId });
+
+            return userResponse.Users[0];
+
+        }
         private void Monitor_OnStreamOnline(object sender, OnStreamOnlineArgs e)
         {
             Console.WriteLine("Stream online from Api");

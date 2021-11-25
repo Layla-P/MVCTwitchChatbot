@@ -9,8 +9,8 @@ connection.on("LaylaMessage", function (user, message, action) {
 	//    triggerCannon();
 	//}
 	//else {
-	let count = action === "super" ? 50 : ("sub" ? 1 : 13);
-	let image = action === "waffle" ? "waffle.png" : ("sub" ? "sub.png" : "destructopup-112.png");
+	let count = action === "super" ? 50 : (action ==="sub" ? 1 : 13);
+	let image = action === "waffle" ? "waffle.png" : (action === "sub" ? "gift.png" : "destructopup-112.png");
 	triggerRain(count, image);
 	//}
 

@@ -49,6 +49,10 @@ namespace MvcChatBot.Hubs
 
         }
 
+        public async Task PingImage(string imageUrl)
+        {
+            await Clients.All.SendAsync("PingImage", imageUrl);
+        }
         public Task SendMessageToGroup(string message)
         {
             return Clients.Group("SignalR Users").SendAsync("ReceiveMessage", message);

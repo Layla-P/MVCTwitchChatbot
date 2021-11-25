@@ -1,12 +1,23 @@
 "use strict";
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
-
+let imageUrl;
 
 connection.on("Bops", function (count) {
 
+    imageUrl = "images/ferns.png";
     handleClick(count);
+
 });
+
+connection.on("PingImage", function (image) {
+
+    imageUrl = image;
+    handleClick(1);
+
+});
+
+
 
 connection.start().then(function () {
    
@@ -25,7 +36,7 @@ function createBall() {
         restitution: 0.8,
         render: {
             sprite: {
-                texture: "waffle.png"
+                texture: imageUrl
             }
         }
     });
