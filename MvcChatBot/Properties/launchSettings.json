@@ -10,6 +10,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
+      "launchUrl": "rain",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -17,6 +18,7 @@
     "MvcChatBot": {
       "commandName": "Project",
       "launchBrowser": true,
+      "launchUrl":  "rain",
       "applicationUrl": "http://localhost:52172",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

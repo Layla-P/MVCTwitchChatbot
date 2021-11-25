@@ -3,9 +3,12 @@
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <UserSecretsId>MvcChatBot</UserSecretsId>
+        <ApplicationIcon />
+        <OutputType>Exe</OutputType>
+        <StartupObject />
     </PropertyGroup>
 
-    <ItemGroup>
+    <!--<ItemGroup>
       <Content Update="wwwroot\js\chat.js">
         <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -30,7 +33,7 @@
         <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       </Content>
-    </ItemGroup>
+    </ItemGroup>-->
 
     <ItemGroup>
       <PackageReference Include="Airtable" Version="1.1.5" />

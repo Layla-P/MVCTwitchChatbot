@@ -35,18 +35,14 @@ namespace MvcChatBot.Agent.Services
             _client.OnFollow += onFollow;
 
             _client.ListenToFollows(_settings.ChannelId);
-            ListenToRewards(_settings.ChannelId);
+            _client.ListenToChannelPoints(_settings.ChannelId);
+            _client.OnChannelPointsRewardRedeemed += PubSub_OnChannelPointsRewardRedeemed;
             //_client.ListenToChannelPoints(_settings.ChannelId);
             //_client.ListenToRewards(_settings.ChannelId);
 
             _client.Connect();
         }
-        private void ListenToRewards(string channelId)
-        {
-            _client.ListenToChannelPoints(channelId);
-            _client.OnChannelPointsRewardRedeemed += PubSub_OnChannelPointsRewardRedeemed;
-        }
-
+        
         private void PubSub_OnChannelPointsRewardRedeemed(object sender, OnChannelPointsRewardRedeemedArgs e)
         {
             var redemption = e.RewardRedeemed.Redemption;

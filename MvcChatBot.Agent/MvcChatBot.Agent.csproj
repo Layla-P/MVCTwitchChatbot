@@ -25,19 +25,13 @@
       <PackageReference Include="TrelloNet" Version="0.6.2" />
       <PackageReference Include="TwitchLib.Client" Version="3.2.4" />
       <!--<PackageReference Include="TwitchLib.PubSub" Version="3.1.5-CI-20200712-3" />-->
+		<PackageReference Include="TwitchLib.PubSub" Version="3.2.3" />
       <PackageReference Include="TwitchLib.Api" Version="3.3.0" />
     </ItemGroup>
 
 
     <ItemGroup>
       <ProjectReference Include="..\MvcChatBot\MvcChatBot.csproj" />
-    </ItemGroup>
-
-	<ItemGroup>
-      <Reference Include="TwitchLib.PubSub">
-        <HintPath>..\..\..\Unity\VirtualScene_Winter\Assets\DotNetLibraryPlugins\TwitchLib.Unity\TwitchLib.PubSub.dll</HintPath>
-      </Reference>
-     
     </ItemGroup>
 
 </Project>
